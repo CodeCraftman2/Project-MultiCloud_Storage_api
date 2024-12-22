@@ -1,0 +1,22 @@
+{"properties": [
+  {
+    "name": "microsoft.tenant-id",
+    "type": "java.lang.String",
+    "description": "A description for 'microsoft.tenant-id'"
+  },
+  {
+    "name": "security.basic.enabled",
+    "type": "java.lang.String",
+    "description": "A description for 'security.basic.enabled'"
+  },
+  {
+    "name": "management.security.enabled",
+    "type": "java.lang.String",
+    "description": "A description for 'management.security.enabled'"
+  },
+  {
+    "name": "google.credentials.path",
+    "type": "java.lang.String",
+    "description": "A description for 'google.credentials.path'"
+  }
+]}
