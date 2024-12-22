@@ -1,0 +1,30 @@
+<div id="files">
+    <div class="files">
+        <div class="searchbar">
+            <input type="text" id="searchString" name="searchString" [(ngModel)]="searchString"/>
+            <img src="search_icon.png" width="30px" height="30px" (click)="search(searchString)"/>
+        </div>
+        <div class="files_table">
+            <table>
+                <thead>
+                    <div class="td-div">
+                        <th class="name">File Name</th>
+                        <th>File type</th>
+                        <th>File size</th>
+                        <th>Created Date</th>
+                        <th>Delete</th>
+                    </div>
+                </thead>
+                <tbody *ngFor="let file of files;">
+                    <div class="td-div">
+                        <td class="name">{{file.fileName}}</td>
+                        <td>{{file.fileType}}</td>
+                        <td>{{(file.fileSize/(1024*1024)).toFixed(2)}}MB</td>
+                        <td>{{file.createdAt | date:'dd/MM/yyyy'}}</td>
+                        <td><button class="delete" (click)="delete(file.fileId)"><img id="delete-img" src="delete.png" width="18px" height="25px" /></button></td>
+                    </div>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

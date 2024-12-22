@@ -1,0 +1,22 @@
+<div class="div-body">
+    <div class="login-card">
+        <div class="loginform">
+            <img src="lock_icon.png"/>
+            <a> Forgot password ?</a>
+        </div>
+        <div class="loginform">
+            <div>
+                <form (ngSubmit)="onLogin()" class="loginform">
+                    <label>Username: <input type="text" id="username" name="username" [(ngModel)]="credentials.username"/></label>
+                    <label>Password: <input type="password" id="password" name="password" [(ngModel)]="credentials.password"/></label>
+                    <button type="submit" id="login-btn" >Login</button>
+                </form>
+                <hr id="horizontal-line">
+                <div class="reg">
+                    <p> Don't have an account?</p>
+                    <button id="register-btn" (click)="register()">Register</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

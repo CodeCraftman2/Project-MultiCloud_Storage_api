@@ -1,0 +1,30 @@
+header{
+    background: linear-gradient(70deg, rgb(78, 18, 151),#870cb8,rgb(78,18,151));
+    width: 100vw;
+    height: max(50px, 8vh);
+    top: 0;
+    left: 0;
+    display: flex;
+    flex-direction: row;
+    position: fixed;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+}
+#app-icon{
+    width: 40px;
+    height: 40px;
+}
+#app-title{
+    color: aliceblue;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    width: fit-content;
+}
+header ul{
+    list-style: none;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+header ul li{
+    margin: 5px;
+    padding: 5px;
+}

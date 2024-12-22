@@ -1,0 +1,105 @@
+.div-body{
+    margin: 0px;
+    top: max(50px,8vh);
+    bottom: 40px;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    height: calc(100vh - max(95px , 14vh));
+    width: 100vw;
+    background-color: whitesmoke;
+
+}
+
+.login-card{
+    min-width: 30vw;
+    min-height: 30vh;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background-color: white;
+    border: 1px solid rgb(165, 162, 162);
+    border-radius: 15px;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+
+}
+
+input{
+    border-radius: 5px;
+    background-color: transparent;
+    font-size: medium;
+    text-align: left;
+    margin: 5px;
+    padding: 5px;
+}
+
+label{
+    font-size: large;
+    text-align: left;
+    margin: 5px;
+}
+
+#login-btn{
+    width: 100px;
+    height: 40px;
+    padding: 8px;
+    margin: 5px;
+    font-size: large;
+    color: azure;
+    background-color: rgb(3, 168, 3);
+    border-radius: 7px;
+    border: 2px solid rgb(209, 206, 206);
+    cursor: pointer;
+    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.3);
+}
+
+#login-btn:active{
+    transform: scale(0.9);
+    background-color: rgb(2, 127, 2);
+}
+
+img{
+    width: 120px;
+    height: 140px;
+}
+
+#register-btn{
+    width: 100px;
+    height: 40px;
+    padding: 8px;
+    margin: 5px 5px 5px 30px;
+    font-size: large;
+    color: azure;
+    background-color: rgb(0, 0, 0);
+    border-radius: 7px;
+    border: 2px solid rgb(209, 206, 206);
+    cursor: pointer;
+    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.3);
+}
+#register-btn:active{
+    transform: scale(0.9);
+    background-color: rgb(22, 23, 22);
+}
+
+.reg{
+    display: flex;
+    flex-direction:row;
+    align-items: center;
+    justify-content: center;
+}
+.loginform{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 15px;
+}
+
+#horizontal-line{
+    margin: 10px;
+    background-color: transparent;
+}

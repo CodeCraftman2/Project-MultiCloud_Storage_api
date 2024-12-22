@@ -1,0 +1,9 @@
+<nav class="side-bar">
+    <div *ngFor="let box of boxes; let i = index"
+          (click)="onBoxClick(i)"
+          [ngClass]="{'active': activeBoxIndex === i}"
+          class="box">
+        <div class="div-icon"><img class="icon" [src]="box.src" /></div>
+        <div class="div-text">{{ box.content }}</div>
+    </div>
+</nav>

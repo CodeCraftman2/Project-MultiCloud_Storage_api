@@ -1,0 +1,39 @@
+footer{
+    background: linear-gradient(70deg, rgb(78, 18, 151),#870cb8,rgb(78,18,151));
+    width: 100vw;
+    height: 45px;
+    bottom: 0;
+    left: 0;
+    position: fixed;
+    color: aliceblue;
+    padding: 7px 10px 2px 10px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-items: center;
+    justify-content: center;
+}
+
+div{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-items: center;
+}
+ul{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    margin-left: 5px;
+    list-style: none;
+}
+
+ul li{
+    margin: 5px 20px 5px 5px;
+}
+
+ul li img{
+    width: 30px;
+    height: 30px;
+}

@@ -1,0 +1,18 @@
+<div id="home">
+    <div class="drives">
+        <div *ngFor="let drive of drives; let i = index" (click)="openDrive(i)" class="drive">
+            <div class="drive-storage">used: {{drive.storage}}%</div>
+            <img class="drive-img" [src]="drive.src"/>
+            <div class="drive-name"><b>{{drive.name}}</b></div>
+            <div class="drive-email">{{drive.email}}</div>
+        </div>
+    </div>
+    <div class="upload">
+        <button (click)="openFileChooser(fileInput)"><img src="file_upload_icon.png" width="25px" height="25px" style="margin: 6px;"/>Upload File</button>
+        <input type="file" #fileInput (change)="onFileSelected($event)" style="display: none;" multiple/>
+        <div style="display: flex;flex-direction: column;">
+            <label><input type="checkbox" [(ngModel)]="isChecked[0]"/>Google Drive</label>
+            <label><input type="checkbox" [(ngModel)]="isChecked[1]"/>One Drive</label>
+        </div>
+    </div>
+</div>

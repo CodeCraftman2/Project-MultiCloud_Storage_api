@@ -1,0 +1,97 @@
+.div-body{
+    margin: 0px;
+    top: max(50px,8vh);
+    bottom: 40px;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    height: calc(100vh - max(95px , 14vh));
+    width: 100vw;
+    background-color: whitesmoke;
+
+}
+
+.register-card{
+    min-width: 30vw;
+    min-height: 30vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2px 20px 20px 20px;
+    background-color: white;
+    border: 1px solid rgb(165, 162, 162);
+    border-radius: 15px;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+}
+
+h1{
+    width: 100%;
+    height: 10%;
+    margin: 10px 15px 0px 15px;
+    text-align: center;
+    color: white;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    border-radius: 15px 15px 0px 0px;
+    padding: 10px;
+    background: linear-gradient(70deg, rgb(108, 55, 173),#870cb8,rgb(105, 47, 176));
+}
+
+.register{
+    min-width: 30vw;
+    min-height: 30vh;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    background-color: white;
+}
+
+input{
+    width: 250px;
+    border-radius: 5px;
+    background-color: transparent;
+    font-size: medium;
+    text-align: left;
+    margin: 5px;
+    padding: 5px;
+    border-color: black;
+}
+
+label{
+    font-size: large;
+    text-align: left;
+    margin: 5px;
+    font-weight: 800;
+    
+}
+
+.registerform{
+    display: flex;
+    flex-direction: column;
+    align-items: end;
+    justify-content: center;
+    margin: 15px;
+}
+
+#submit-btn{
+    width: 100px;
+    height: 40px;
+    padding: 8px;
+    margin: 15px 5px 5px 5px;
+    font-size: large;
+    color: azure;
+    background-color: rgb(3, 168, 3);
+    border-radius: 7px;
+    border: 2px solid rgb(209, 206, 206);
+    cursor: pointer;
+    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.3);
+}
+
+#submit-btn:active{
+    transform: scale(0.9);
+    background-color: rgb(2, 127, 2);
+}

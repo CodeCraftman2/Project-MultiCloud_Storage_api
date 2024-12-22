@@ -1,0 +1,33 @@
+<div id="drive">
+    <div class="head">
+        <button id="back-btn" (click)="goBack()"><img src="back.png" width="30px" height="30px"/>Back</button>
+        <div class="driveimg-name"><img [src]="drive[0].src" width="30px" height="30px"/> {{drive[0].name}}</div>
+        <div>{{drive[0].email}}</div>
+        <div class="drive-space">
+            Used Space: <b>{{(drive[0].storage * 0.15).toFixed(2) }}</b> Gb <br>
+            Free Space: <b>{{(15 - (drive[0].storage * 0.15)).toFixed(2)}}</b> Gb
+        </div>
+    </div>
+    <div class="drive-files">
+        <table>
+            <thead>
+                <div class="td-div">
+                    <th class="name">File Name</th>
+                    <th>File type</th>
+                    <th>File size</th>
+                    <th>Created Date</th>
+                    <th>Delete</th>
+                </div>
+            </thead>
+            <tbody *ngFor="let file of googleFiles">
+                <div class="td-div">
+                    <td class="name">{{file.name}}</td>
+                    <td>{{file.type}}</td>
+                    <td>{{file.size}}</td>
+                    <td>{{file.createdAt}}</td>
+                    <td><button class="delete" (click)="delete()"><img id="delete-img" src="delete.png" width="18px" height="25px" /></button></td>
+                </div>
+            </tbody>
+        </table>
+    </div>
+</div>

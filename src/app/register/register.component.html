@@ -1,0 +1,21 @@
+<div class="div-body">
+    <div class="register-card">
+        <h1>Register here...</h1>
+        <div class="register">
+            <div class="registerform">
+                <img src="profile_icon_black.png" width="200px" height="200px"/>
+            </div>
+            <div class="registerform">
+                <form (ngSubmit)="onSubmit()">
+                    <div class="registerform">
+                        <label>Username: <input type="text" id="username" name="username" [(ngModel)]="user.username"/></label>
+                        <label>Email ID: <input type="email" id="email" name="email" [(ngModel)]="user.email"/></label>
+                        <label>Password: <input type="password" id="passwordHash" name="passwordHash" [(ngModel)]="user.passwordHash"/></label>
+                        <label>Confirm Password: <input type="password" id="confpwd" name="confpwd" [(ngModel)]="confpwd"/></label>
+                        <button type="submit" id="submit-btn" >Submit</button>
+                    </div>                
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
