@@ -12,6 +12,14 @@ This project is a comprehensive multi-cloud file storage system built using Spri
 - Multi-cloud platform support
 
 ## Output Screenshots:
-![UI Screenshot](https://i.imgur.com/springboot-setup-GeZbF22.jpg) 
-![Backend Screenshot](path_to_backend_screenshot)
+[![Error-logs](https://github.com/CodeCraftman2/Project-MultiCloud_Storage_api/blob/a5f8a78cecec3fea66fcdc4f4d5608259f211443/errorlog-email%20exist%20-%20Imgur.png)
+![Uploading on cloud](https://github.com/CodeCraftman2/Project-MultiCloud_Storage_api/blob/a5f8a78cecec3fea66fcdc4f4d5608259f211443/Uploading%20on%20cloud%20-%20Imgur.png)
 ![Upload Successfull](https://github.com/CodeCraftman2/Project-MultiCloud_Storage_api/blob/b11c4538b34ad7b304a67f1c78482f4000c28130/Upload%20successfully%20-%20Imgur.png)
+![User profile](https://github.com/CodeCraftman2/Project-MultiCloud_Storage_api/blob/a5f8a78cecec3fea66fcdc4f4d5608259f211443/Profile%20-%20Imgur.png)
+![About app](https://github.com/CodeCraftman2/Project-MultiCloud_Storage_api/blob/a5f8a78cecec3fea66fcdc4f4d5608259f211443/About%20page%20-%20Imgur.png)
+![Upload Successfull](
+![Upload Successfull](
+![Upload Successfull](
+![Upload Successfull](
+![Upload Successfull](
+![Upload Successfull](
