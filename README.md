@@ -14,3 +14,4 @@ This project is a comprehensive multi-cloud file storage system built using Spri
 ## Output Screenshots:
 ![UI Screenshot](https://i.imgur.com/springboot-setup-GeZbF22.jpg) 
 ![Backend Screenshot](path_to_backend_screenshot)
+![Upload Successfull](https://github.com/CodeCraftman2/Project-MultiCloud_Storage_api/blob/b11c4538b34ad7b304a67f1c78482f4000c28130/Upload%20successfully%20-%20Imgur.png)
