@@ -12,5 +12,5 @@ This project is a comprehensive multi-cloud file storage system built using Spri
 - Multi-cloud platform support
 
 ## Output Screenshots:
-![UI Screenshot]([(https://github.com/CodeCraftman2/Project-MultiCloud_Storage_api/blob/CodeCraftman2-prevew/Screenshot%202024-12-22%20120509.png))  
+![UI Screenshot](https://imgur.com/gallery/springboot-setup-GeZbF22) 
 ![Backend Screenshot](path_to_backend_screenshot)
