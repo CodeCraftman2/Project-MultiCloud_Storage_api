@@ -12,5 +12,5 @@ This project is a comprehensive multi-cloud file storage system built using Spri
 - Multi-cloud platform support
 
 ## Output Screenshots:
-![UI Screenshot](path_to_ui_screenshot)  
+![UI Screenshot](Screenshot 2024-12-22 120128.png)  
 ![Backend Screenshot](path_to_backend_screenshot)
