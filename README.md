@@ -12,5 +12,5 @@ This project is a comprehensive multi-cloud file storage system built using Spri
 - Multi-cloud platform support
 
 ## Output Screenshots:
-![UI Screenshot](https://imgur.com/gallery/springboot-setup-GeZbF22) 
+![UI Screenshot](https://i.imgur.com/springboot-setup-GeZbF22.jpg) 
 ![Backend Screenshot](path_to_backend_screenshot)
