@@ -12,14 +12,12 @@ This project is a comprehensive multi-cloud file storage system built using Spri
 - Multi-cloud platform support
 
 ## Output Screenshots:
-[![Error-logs](https://github.com/CodeCraftman2/Project-MultiCloud_Storage_api/blob/a5f8a78cecec3fea66fcdc4f4d5608259f211443/errorlog-email%20exist%20-%20Imgur.png)
+![Setup](https://github.com/CodeCraftman2/Project-MultiCloud_Storage_api/blob/2edafccf5c08747dee7f961949b55be6dc24d37d/springboot%20setup%20-%20Imgur.png)
+![User Registration](https://github.com/CodeCraftman2/Project-MultiCloud_Storage_api/blob/2edafccf5c08747dee7f961949b55be6dc24d37d/Register%20page%20-%20Imgur.png)
+![Login -page](https://github.com/CodeCraftman2/Project-MultiCloud_Storage_api/blob/2edafccf5c08747dee7f961949b55be6dc24d37d/Login%20Page%20-%20Imgur.png)
 ![Uploading on cloud](https://github.com/CodeCraftman2/Project-MultiCloud_Storage_api/blob/a5f8a78cecec3fea66fcdc4f4d5608259f211443/Uploading%20on%20cloud%20-%20Imgur.png)
-![Upload Successfull](https://github.com/CodeCraftman2/Project-MultiCloud_Storage_api/blob/b11c4538b34ad7b304a67f1c78482f4000c28130/Upload%20successfully%20-%20Imgur.png)
 ![User profile](https://github.com/CodeCraftman2/Project-MultiCloud_Storage_api/blob/a5f8a78cecec3fea66fcdc4f4d5608259f211443/Profile%20-%20Imgur.png)
 ![About app](https://github.com/CodeCraftman2/Project-MultiCloud_Storage_api/blob/a5f8a78cecec3fea66fcdc4f4d5608259f211443/About%20page%20-%20Imgur.png)
-![Upload Successfull](
-![Upload Successfull](
-![Upload Successfull](
-![Upload Successfull](
-![Upload Successfull](
-![Upload Successfull](
+![Registration massage](https://github.com/CodeCraftman2/Project-MultiCloud_Storage_api/blob/2edafccf5c08747dee7f961949b55be6dc24d37d/log-Registered%20Successfully%20-%20Imgur.png)
+![Upload Successfull](https://github.com/CodeCraftman2/Project-MultiCloud_Storage_api/blob/b11c4538b34ad7b304a67f1c78482f4000c28130/Upload%20successfully%20-%20Imgur.png)
+[![Error-logs](https://github.com/CodeCraftman2/Project-MultiCloud_Storage_api/blob/a5f8a78cecec3fea66fcdc4f4d5608259f211443/errorlog-email%20exist%20-%20Imgur.png)
