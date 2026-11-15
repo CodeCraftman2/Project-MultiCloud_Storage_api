@@ -98,7 +98,8 @@ public class WebSecurityConfig {
             .csrf(csrf -> csrf.disable())  // Disable CSRF for state-less APIs
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/users/register", "/users/login", "/oauth/google", "/oauth/onedrive", "/users/myfiles","/oauth/google","/oauth/onedrive",
-                		"/oauth/google/callback", "/oauth/onedrive/callback" ,"/users/all", "/users/tokens","/users/currentuser","/users/update/{id}").permitAll()  // Public endpoints
+                		"/oauth/google/callback", "/oauth/onedrive/callback" ,"/users/all", "/users/tokens","/users/currentuser","/users/update/{id}",
+                		"/api/files/**").permitAll()  // Public endpoints
                 .anyRequest().authenticated())  // Require authentication for all other endpoints
             .exceptionHandling(exceptions -> 
                 exceptions.authenticationEntryPoint(jwtAuthenticationEntryPoint))  // Custom JWT entry point

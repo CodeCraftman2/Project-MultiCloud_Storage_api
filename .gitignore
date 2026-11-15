@@ -31,3 +31,8 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Local secrets ###
+secrets.properties
+hs_err_pid*.log
+replay_pid*.log

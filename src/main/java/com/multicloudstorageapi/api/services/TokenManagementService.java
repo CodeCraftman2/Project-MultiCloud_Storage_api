@@ -157,6 +157,7 @@ public class TokenManagementService {
         body.add("client_id", microsoftClientId);
         body.add("client_secret", microsoftClientSecret);
         body.add("refresh_token", refreshToken);
+        body.add("scope", "User.Read Files.ReadWrite.All offline_access");
         body.add("grant_type", "refresh_token");
 
         HttpHeaders headers = new HttpHeaders();
@@ -188,6 +189,7 @@ public class TokenManagementService {
             body.add("client_id", microsoftClientId);
             body.add("client_secret", microsoftClientSecret);
             body.add("redirect_uri", microsoftRedirectUri);
+            body.add("scope", "User.Read Files.ReadWrite.All offline_access");
             body.add("grant_type", "authorization_code");
         } else {
             throw new IllegalArgumentException("Unsupported provider: " + provider);

@@ -1,0 +1,78 @@
+#profile{
+    width: 99%;
+    height: 98%;
+    padding: 5px 5px 5px 5px;
+    background-color:transparent;
+    justify-content: center;
+    align-items: center ;
+    align-self: center;
+    display: flex;
+    flex-direction: row;
+}
+
+img{
+    width: 45vh;
+    height: 45vh;
+    border-radius: 50%;
+    margin: 30px;
+    padding: 20px;
+    border: 5px solid #870cb8;
+}
+  
+.userInfo{
+    justify-content: center;
+    align-items: center;
+    align-self: center;
+    display: flex;
+    flex-direction: column;
+    width: fit-content;
+    height: fit-content;
+    padding: 20px;
+    border: 1px solid white;
+    border-radius: 15px;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+}
+.userInfo ul{
+    justify-content: center;
+    align-items: center ;
+    display: flex;
+    flex-direction: column;
+    list-style: none;
+}
+.userInfo ul li{
+    align-items: center;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    margin-right: 15px;
+}
+
+input{
+    width: 20vw;
+    height: 35px;
+    border-radius: 10px;
+    border: 2px solid green;
+    text-align: center;
+}
+label{
+    color: black;
+    padding: 5px;
+    font-size: larger;
+}
+
+button {
+    background-color: black;
+    color: white;
+    font-size: large;
+    border: none;
+    width: 200px;
+    height: 40px;
+    right: 0;
+    margin:10px;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 7px;
+  }
+  
+  button:hover {
+    background-color: rgb(44, 44, 44);
+  }

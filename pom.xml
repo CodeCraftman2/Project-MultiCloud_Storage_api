@@ -30,6 +30,8 @@
 		<java.version>22</java.version>
 		<spring-cloud-gcp.version>5.8.0</spring-cloud-gcp.version>
 		<spring-cloud.version>2023.0.3</spring-cloud.version>
+		<!-- Lombok 1.18.36 (Boot 3.3.6 default) does not support JDK 25 -->
+		<lombok.version>1.18.42</lombok.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -243,6 +245,25 @@
 
 	<build>
 		<plugins>
+			<!-- JDK 23+ disables implicit annotation processing; declare processors explicitly -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<annotationProcessorPaths>
+						<path>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok</artifactId>
+							<version>${lombok.version}</version>
+						</path>
+						<path>
+							<groupId>org.springframework.boot</groupId>
+							<artifactId>spring-boot-configuration-processor</artifactId>
+							<version>${project.parent.version}</version>
+						</path>
+					</annotationProcessorPaths>
+				</configuration>
+			</plugin>
 			<plugin>
 				<groupId>org.asciidoctor</groupId>
 				<artifactId>asciidoctor-maven-plugin</artifactId>

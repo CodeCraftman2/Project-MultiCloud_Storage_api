@@ -1,0 +1,15 @@
+<div id="profile">
+    <div >
+        <img src="profile_icon_black.png" />
+    </div>
+
+    <form class="userInfo" [formGroup]="userForm" (ngSubmit)="updateUserDetails()">
+        <ul>
+            <li><label><b>Username : </b><input type="text"   formControlName = "username" ></label></li>
+            <li><label><b>Email ID : </b><input type="email" formControlName  = "email" ></label></li>
+            <li><label><b>Password : </b><input formControlName = "passwordHash"
+                (click)="toggleVisibility()" [type]="isPasswordVisible ? 'text' : 'password'"></label></li>
+        </ul>
+        <button type="submit">Update Details</button>
+    </form>
+</div>
