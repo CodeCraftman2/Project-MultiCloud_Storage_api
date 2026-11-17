@@ -36,3 +36,6 @@ build/
 secrets.properties
 hs_err_pid*.log
 replay_pid*.log
+
+# Google OAuth client credentials (local only)
+src/main/resources/google_credentials.json
