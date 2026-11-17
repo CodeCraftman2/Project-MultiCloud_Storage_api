@@ -1,40 +1,62 @@
-<div id="about">
-    <div class="about">
-        <p id="paragraph">
-            This project is a web application that offers a cohesive 
-            and user-friendly experience for managing files across 
-            Google Drive and OneDrive. It simplifies file 
-            management by allowing users to upload files to both 
-            platforms simultaneously, transfer files between them, 
-            and download files as needed.
-            Provide a centralized platform for managing 
-            files across Google Drive and OneDrive. 
-            Enhance file management efficiency and user 
-            productivity. 
-            Ensure secure and seamless interaction with 
-            cloud APIs using OAuth2 and JWT. 
-        </p>
-        <hr>
-        <h2>User Guide </h2>
-        <h4>Setup: </h4>
-        <p>Access the application URL. <br>
-        For the first time create an account by 
-        providing your details in this platform. <br>
-        Log in using your Google or Microsoft account 
-        credentials. </p>
-
-        <h4>Using the Application: </h4>
-        <p>Upload files by selecting both platforms. <br>
-        Drag and Drop feature available to upload 
-        files. <br>
-        Use the transfer feature to move files between 
-        Google Drive and OneDrive. <br>
-        Download files by navigating to the desired 
-        storage service. </p>
-
-        <h4>Troubleshooting: </h4>
-        <p><b>Issue:</b> Cannot log in.<br>
-        <b>Solution:</b> Verify API key configuration and 
-        network connectivity. </p>
+<div class="page">
+  <section class="hero card">
+    <div class="hero-text">
+      <span class="badge">About MultiCloud</span>
+      <h2>Manage files across Google Drive and OneDrive from one place.</h2>
+      <p>
+        MultiCloud File Storage brings your cloud drives into one easy workspace. Upload to several
+        platforms at once, browse and download files, and keep an eye on storage, all secured with OAuth 2.0 and JWT.
+      </p>
     </div>
+    <div class="hero-art" aria-hidden="true">
+      <div class="orb"><app-icon name="cloud" [size]="44" [stroke]="1.8" /></div>
+      <img src="googledrive.png" class="float g" alt="" />
+      <img src="onedrive.png" class="float o" alt="" />
+    </div>
+  </section>
+
+  <section class="features">
+    @for (f of features; track f.title) {
+      <div class="card feature">
+        <div class="f-ico"><app-icon [name]="f.icon" [size]="20" /></div>
+        <h4>{{ f.title }}</h4>
+        <p>{{ f.text }}</p>
+      </div>
+    }
+  </section>
+
+  <div class="two">
+    <section class="card pad">
+      <h3 class="section-title"><app-icon name="zap" [size]="17" /> Getting started</h3>
+      <ol class="steps">
+        @for (s of steps; track s.title; let i = $index) {
+          <li>
+            <span class="n">{{ i + 1 }}</span>
+            <div><strong>{{ s.title }}</strong><p>{{ s.text }}</p></div>
+          </li>
+        }
+      </ol>
+    </section>
+
+    <section class="card pad">
+      <h3 class="section-title"><app-icon name="info" [size]="17" /> Troubleshooting</h3>
+      @for (f of faq; track f.q) {
+        <details class="faq">
+          <summary>{{ f.q }} <app-icon name="chevron-down" [size]="16" /></summary>
+          <p>{{ f.a }}</p>
+        </details>
+      }
+      <div class="sys">
+        <span class="muted">Backend</span>
+        <span class="mono">{{ apiBase }}</span>
+        @switch (status.backend()) {
+          @case ('online') { <span class="badge ok"><span class="dot ok"></span>Online</span> }
+          @case ('offline') { <span class="badge err"><span class="dot err"></span>Offline</span> }
+          @default { <span class="badge muted">Checking…</span> }
+        }
+      </div>
+    </section>
+  </div>
+
+  <p class="credit">Built during the Infosys Springboard Multi-cloud Java batch, Oct 2024.</p>
 </div>

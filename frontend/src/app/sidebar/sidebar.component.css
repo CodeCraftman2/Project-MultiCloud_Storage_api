@@ -1,50 +1,49 @@
-/*----------------------------- Sidebar ---------------------------*/
-.side-bar{
-    width: 12vw;
-    height: 100%;
-    padding: 5px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    background-color: rgb(0, 0, 0);
-}
-.icon{
-    width: 24px;
-    height: 24px;
-}
-.box{
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: left;
-    padding: 5px;
-    width: 100%;
-    height: 45px;
-    text-decoration: none;
-    margin: 10px;
-    text-align: center;
-    cursor: pointer;
-    color: aliceblue;
-    background: linear-gradient(70deg, rgb(78, 18, 151), rgb(78, 18, 151));
-}
-.div-icon{
-    width: 30%;
-    height: 100%;
-    display: flex;
-    margin-right: 20px;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+:host { display: block; }
+
+.side {
+  height: 100%;
+  display: flex; flex-direction: column; gap: 6px;
+  padding: 18px 14px;
+  background: #160f2b;
+  background-image: radial-gradient(120% 60% at 0% 0%, rgba(124, 58, 237, .35) 0%, transparent 60%);
+  color: #c9c2de;
+  overflow-y: auto;
 }
 
-.box:hover {
-    background: linear-gradient(70deg, rgb(78, 18, 151),#870cb8,rgb(78,18,151));
-    box-shadow: 0 8px 16px rgba(255, 255, 255, 0.2);
+.brand { display: flex; align-items: center; gap: 12px; padding: 4px 8px 18px; color: #fff; text-decoration: none; }
+.brand:hover { text-decoration: none; }
+.brand-mark {
+  width: 38px; height: 38px; border-radius: 12px; display: grid; place-items: center;
+  background: var(--brand-gradient); color: #fff; box-shadow: 0 6px 18px rgba(124, 58, 237, .45);
 }
+.brand-text { display: flex; flex-direction: column; line-height: 1.15; }
+.brand-text strong { font-size: 16px; font-weight: 800; letter-spacing: -.01em; }
+.brand-text small { font-size: 11.5px; color: #9a92b3; font-weight: 500; }
 
-.active {
-    transform: scale(1.05);
-    padding-left: 7%;
-    box-shadow: 0 8px 16px rgba(255, 255, 255, 0.2);
-    background: linear-gradient(70deg, rgb(78, 18, 151),#870cb8,rgb(78,18,151));
+.group { display: flex; flex-direction: column; gap: 2px; margin-top: 10px; }
+.group-label { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: #6f6789; padding: 0 10px 6px; }
+
+.nav-item {
+  display: flex; align-items: center; gap: 12px;
+  height: 40px; padding: 0 10px; border-radius: 10px;
+  color: #c9c2de; font-weight: 500; text-decoration: none;
+  transition: background .15s, color .15s;
 }
+.nav-item:hover { background: rgba(255, 255, 255, .06); color: #fff; text-decoration: none; }
+.nav-item.active { background: rgba(139, 92, 246, .22); color: #fff; box-shadow: inset 3px 0 0 var(--brand-400); }
+.nav-item.active app-icon { color: var(--brand-400); }
+
+.drive-logo { width: 18px; height: 18px; object-fit: contain; }
+.spinner.mini { width: 10px; height: 10px; border-width: 2px; color: #9a92b3; }
+.dot:not(.ok):not(.err) { background: #4b4463; }
+
+.storage {
+  margin-top: auto;
+  padding: 14px; border-radius: 14px;
+  background: rgba(255, 255, 255, .05); border: 1px solid rgba(255, 255, 255, .07);
+  display: flex; flex-direction: column; gap: 8px;
+}
+.storage-head { display: flex; align-items: center; gap: 8px; font-size: 12.5px; font-weight: 600; color: #fff; }
+.storage-head .pct { margin-left: auto; font-family: var(--mono); font-size: 11.5px; color: var(--brand-400); }
+.storage .progress { background: rgba(255, 255, 255, .1); height: 6px; }
+.storage-foot { font-size: 11.5px; color: #8d85a6; }

@@ -1,15 +1,104 @@
-<div id="profile">
-    <div >
-        <img src="profile_icon_black.png" />
+<div class="page">
+  <div class="page-head">
+    <div>
+      <h2 class="page-title">Profile</h2>
+      <p class="page-sub">Manage your account details and connected drives.</p>
     </div>
+  </div>
 
-    <form class="userInfo" [formGroup]="userForm" (ngSubmit)="updateUserDetails()">
-        <ul>
-            <li><label><b>Username : </b><input type="text"   formControlName = "username" ></label></li>
-            <li><label><b>Email ID : </b><input type="email" formControlName  = "email" ></label></li>
-            <li><label><b>Password : </b><input formControlName = "passwordHash"
-                (click)="toggleVisibility()" [type]="isPasswordVisible ? 'text' : 'password'"></label></li>
-        </ul>
-        <button type="submit">Update Details</button>
+  <div class="grid">
+    <!-- Identity card -->
+    <aside class="card identity">
+      <div class="cover"></div>
+      @if (userService.currentUser(); as u) {
+        <div class="avatar">{{ userService.initials() }}</div>
+        <h3 class="uname">{{ u.username }}</h3>
+        <p class="muted">{{ u.email }}</p>
+        <dl class="facts">
+          <div><dt>User ID</dt><dd class="mono">#{{ u.userId }}</dd></div>
+          <div><dt>Member since</dt><dd>{{ u.createdAt ? (u.createdAt | date: 'MMM d, y') : '—' }}</dd></div>
+          <div><dt>Last updated</dt><dd>{{ u.updatedAt ? (u.updatedAt | date: 'MMM d, y, HH:mm') : '—' }}</dd></div>
+        </dl>
+      } @else if (userService.userState() === 'error') {
+        <div class="avatar err"><app-icon name="alert" [size]="28" /></div>
+        <h3 class="uname">Couldn't load profile</h3>
+        <button class="btn btn-secondary btn-sm" (click)="getCurrentUserDetails()"><app-icon name="refresh" [size]="14" /> Retry</button>
+      } @else {
+        <div class="avatar"><span class="spinner"></span></div>
+        <div class="skeleton" style="height:16px;width:120px;margin:6px auto 0"></div>
+        <div class="skeleton" style="height:12px;width:160px;margin:8px auto 0"></div>
+        <p class="muted small" style="margin-top:12px">Fetching user info…</p>
+      }
+
+      <div class="connected">
+        <div class="c-title">Connected drives</div>
+        @for (d of drives.all(); track d.key) {
+          <div class="c-row">
+            <img [src]="d.logo" alt="" />
+            <div class="grow">
+              <div class="c-name">{{ d.name }}</div>
+              <div class="c-sub truncate">
+                @switch (d.state) {
+                  @case ('connected') { {{ d.email }} }
+                  @case ('loading') { Checking… }
+                  @case ('error') { Status unavailable }
+                  @default { Not connected }
+                }
+              </div>
+            </div>
+            @if (d.state === 'connected') { <span class="dot ok"></span> }
+            @else if (d.state === 'disconnected') {
+              <button class="btn btn-secondary btn-sm" (click)="drives.connect(d.key)">Connect</button>
+            }
+          </div>
+        }
+      </div>
+    </aside>
+
+    <!-- Edit form -->
+    <form class="card form" [formGroup]="userForm" (ngSubmit)="updateUserDetails()" novalidate>
+      <h3 class="section-title"><app-icon name="user" [size]="17" /> Account details</h3>
+
+      <label class="field">
+        <span class="field-label">Username</span>
+        <span class="input-wrap">
+          <span class="lead"><app-icon name="user" [size]="17" /></span>
+          <input class="input" type="text" formControlName="username" autocomplete="username" [class.invalid]="invalid('username')" />
+        </span>
+        @if (invalid('username')) { <span class="field-error">Username must be at least 3 characters.</span> }
+      </label>
+
+      <label class="field">
+        <span class="field-label">Email</span>
+        <span class="input-wrap">
+          <span class="lead"><app-icon name="mail" [size]="17" /></span>
+          <input class="input" type="email" formControlName="email" autocomplete="email" [class.invalid]="invalid('email')" />
+        </span>
+        @if (invalid('email')) { <span class="field-error">Enter a valid email address.</span> }
+      </label>
+
+      <label class="field">
+        <span class="field-label">Password</span>
+        <span class="input-wrap">
+          <span class="lead"><app-icon name="lock" [size]="17" /></span>
+          <input class="input" [type]="isPasswordVisible() ? 'text' : 'password'" formControlName="passwordHash"
+                 autocomplete="new-password" placeholder="Enter your current or a new password" [class.invalid]="invalid('passwordHash')" />
+          <span class="trail">
+            <button type="button" class="icon-btn" (click)="toggleVisibility()"
+                    [attr.aria-label]="isPasswordVisible() ? 'Hide password' : 'Show password'">
+              <app-icon [name]="isPasswordVisible() ? 'eye-off' : 'eye'" [size]="17" />
+            </button>
+          </span>
+        </span>
+        <span class="field-hint">Required to save. Whatever you enter here becomes your password.</span>
+      </label>
+
+      <div class="actions">
+        <button type="button" class="btn btn-ghost" (click)="reset()" [disabled]="saving() || userForm.pristine">Discard</button>
+        <button type="submit" class="btn btn-primary" [disabled]="saving()">
+          @if (saving()) { <span class="spinner"></span> Saving… } @else { <app-icon name="check" [size]="16" /> Save changes }
+        </button>
+      </div>
     </form>
+  </div>
 </div>

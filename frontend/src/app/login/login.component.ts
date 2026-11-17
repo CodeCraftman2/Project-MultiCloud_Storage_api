@@ -1,48 +1,60 @@
-import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
+import { IconComponent } from '../shared/icon.component';
+import { AuthSideComponent } from './auth-side.component';
+import { DrivesService } from '../services/drives.service';
+import { StatusService } from '../services/status.service';
+import { ToastService, errorMessage } from '../services/toast.service';
 import { UserService } from '../services/user.service';
-import { HttpClientModule, provideHttpClient, withFetch } from '@angular/common/http';
-import { errorContext } from 'rxjs/internal/util/errorContext';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [FormsModule, CommonModule, HttpClientModule],
+  imports: [FormsModule, RouterLink, IconComponent, AuthSideComponent],
   templateUrl: './login.component.html',
-  styleUrl: './login.component.css'
+  styleUrl: './login.component.css',
 })
 export class LoginComponent {
-  
-  register(): void{
+  private router = inject(Router);
+  private userService = inject(UserService);
+  private drives = inject(DrivesService);
+  private toast = inject(ToastService);
+  readonly status = inject(StatusService);
+
+  credentials = { username: '', password: '' };
+  readonly showPassword = signal(false);
+  readonly submitting = signal(false);
+  readonly error = signal<string | null>(null);
+
+  register(): void {
     this.router.navigate(['multicloudstorageapi/register']);
   }
 
-  credentials = {
-    username: '',
-    password: '',
-  };
-
-  constructor(private router:Router, private userService: UserService ) {}
-
   onLogin(): void {
-    this.userService.login(this.credentials.username, this.credentials.password).subscribe({
+    if (!this.credentials.username.trim() || !this.credentials.password) {
+      this.error.set('Enter your username and password.');
+      return;
+    }
+    this.error.set(null);
+    this.submitting.set(true);
+
+    this.userService.login(this.credentials.username.trim(), this.credentials.password).subscribe({
       next: (response: any) => {
-        if ( response.isAuthenticated) {  
-          localStorage.setItem('userId', response.userId); // Store userId and token (if available) in localStorage
+        this.submitting.set(false);
+        if (response?.isAuthenticated) {
+          this.userService.loadCurrentUser();
+          this.drives.refreshAll();
+          this.toast.success('Welcome back!', `Signed in as ${this.credentials.username.trim()}.`);
           this.router.navigate(['multicloudstorageapi/home']);
-        } 
-        else {
-          alert(response.message);
+        } else {
+          this.error.set(response?.message ?? 'Invalid credentials.');
         }
       },
       error: (err: any) => {
-        alert('Error : ' + err.message);
-        console.log(err.message);
+        this.submitting.set(false);
+        this.error.set(errorMessage(err));
       },
     });
   }
-  
-  
 }

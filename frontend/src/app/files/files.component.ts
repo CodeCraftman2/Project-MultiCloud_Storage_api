@@ -1,42 +1,68 @@
-import { CommonModule, formatDate } from '@angular/common';
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
+import { IconComponent } from '../shared/icon.component';
+import { FileRow, FileTableComponent } from '../shared/file-table.component';
+import { FileActions } from '../shared/file-actions';
+import { DriveKey } from '../services/file.service';
+import { errorMessage } from '../services/toast.service';
 import { UserFile, UserService } from '../services/user.service';
 
 @Component({
   selector: 'app-files',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [IconComponent, FileTableComponent, RouterLink],
+  providers: [FileActions],
   templateUrl: './files.component.html',
-  styleUrl: './files.component.css'
+  styleUrl: './files.component.css',
 })
-export class FilesComponent {
+export class FilesComponent implements OnInit {
+  private userService = inject(UserService);
+  readonly actions = inject(FileActions);
 
-  searchString:string='';
-  files: UserFile[] = [];
+  readonly files = signal<UserFile[]>([]);
+  readonly state = signal<'loading' | 'loaded' | 'error'>('loading');
+  readonly errorText = signal('');
+  readonly driveFilter = signal<'all' | DriveKey>('all');
 
-  constructor(private userService: UserService) {}
+  readonly rows = computed<FileRow[]>(() =>
+    this.files()
+      .map((f) => ({
+        key: String(f.fileId),
+        name: f.fileName,
+        type: f.fileType,
+        size: Number(f.fileSize) || 0,
+        createdAt: f.createdAt,
+        drive: (f.driveId === 2 ? 'onedrive' : 'google') as DriveKey,
+        storagePath: f.storagePath,
+      }))
+      .filter((r) => this.driveFilter() === 'all' || r.drive === this.driveFilter())
+  );
+
+  readonly counts = computed(() => ({
+    all: this.files().length,
+    google: this.files().filter((f) => f.driveId !== 2).length,
+    onedrive: this.files().filter((f) => f.driveId === 2).length,
+  }));
 
   ngOnInit(): void {
-    const userId = this.userService.getUserId();   // user ID from localstorage
-    this.userService.getFilesByUserId(userId).subscribe({
+    this.load();
+  }
+
+  load(): void {
+    this.state.set('loading');
+    this.userService.getFilesByUserId(this.userService.getUserId()).subscribe({
       next: (data) => {
-        this.files = data;
+        this.files.set(data ?? []);
+        this.state.set('loaded');
       },
       error: (err) => {
-        console.error('Error fetching files:', err.message);
+        this.errorText.set(errorMessage(err));
+        this.state.set('error');
       },
     });
   }
 
-   search(searchString:string){
-
-   }
-
-   delete(fileId: number):void{
-    
-   }
-
-
-
+  onDelete(row: FileRow): void {
+    this.actions.delete(row, () => this.files.update((list) => list.filter((f) => String(f.fileId) !== row.key)));
+  }
 }

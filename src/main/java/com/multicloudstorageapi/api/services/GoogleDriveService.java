@@ -28,10 +28,10 @@ public class GoogleDriveService {
      * List all files in Google Drive for the authenticated user.
      */
     public List<com.google.api.services.drive.model.File> listFiles(Integer userId) throws Exception {
-        Drive googleDrive = googleDriveConfig.getDriveForCurrentUser();
+        Drive googleDrive = googleDriveConfig.getDriveForUser(userId);
         FileList result = googleDrive.files()
                 .list()
-                .setFields("files(id, name, mimeType, size)")
+                .setFields("files(id, name, mimeType, size, createdTime)")
                 .execute();
         return result.getFiles();
     }
@@ -40,7 +40,7 @@ public class GoogleDriveService {
      * Upload a file to Google Drive.
      */
     public com.google.api.services.drive.model.File uploadFile(MultipartFile file, Integer userId) throws Exception {
-        Drive googleDrive = googleDriveConfig.getDriveForCurrentUser();
+        Drive googleDrive = googleDriveConfig.getDriveForUser(userId);
 
         com.google.api.services.drive.model.File fileMetadata = new com.google.api.services.drive.model.File();
         fileMetadata.setName(file.getOriginalFilename());
@@ -68,7 +68,7 @@ public class GoogleDriveService {
      * Delete a file from Google Drive.
      */
     public void deleteFile(String storagePath, Integer userId) throws Exception {
-        Drive googleDrive = googleDriveConfig.getDriveForCurrentUser();
+        Drive googleDrive = googleDriveConfig.getDriveForUser(userId);
         googleDrive.files().delete(storagePath).execute();
 
         fileRepository.findByStoragePathAndUserId(storagePath, userId).ifPresent(fileRepository::delete);
@@ -78,7 +78,7 @@ public class GoogleDriveService {
      * Download a file from Google Drive.
      */
     public byte[] downloadFile(String storagePath, Integer userId) throws Exception {
-        Drive googleDrive = googleDriveConfig.getDriveForCurrentUser();
+        Drive googleDrive = googleDriveConfig.getDriveForUser(userId);
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         googleDrive.files().get(storagePath).executeMediaAndDownloadTo(outputStream);

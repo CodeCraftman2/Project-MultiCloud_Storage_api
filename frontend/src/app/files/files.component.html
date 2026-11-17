@@ -1,30 +1,29 @@
-<div id="files">
-    <div class="files">
-        <div class="searchbar">
-            <input type="text" id="searchString" name="searchString" [(ngModel)]="searchString"/>
-            <img src="search_icon.png" width="30px" height="30px" (click)="search(searchString)"/>
-        </div>
-        <div class="files_table">
-            <table>
-                <thead>
-                    <div class="td-div">
-                        <th class="name">File Name</th>
-                        <th>File type</th>
-                        <th>File size</th>
-                        <th>Created Date</th>
-                        <th>Delete</th>
-                    </div>
-                </thead>
-                <tbody *ngFor="let file of files;">
-                    <div class="td-div">
-                        <td class="name">{{file.fileName}}</td>
-                        <td>{{file.fileType}}</td>
-                        <td>{{(file.fileSize/(1024*1024)).toFixed(2)}}MB</td>
-                        <td>{{file.createdAt | date:'dd/MM/yyyy'}}</td>
-                        <td><button class="delete" (click)="delete(file.fileId)"><img id="delete-img" src="delete.png" width="18px" height="25px" /></button></td>
-                    </div>
-                </tbody>
-            </table>
-        </div>
+<div class="page">
+  <div class="page-head">
+    <div>
+      <h2 class="page-title">My Files</h2>
+      <p class="page-sub">Every file you've uploaded through MultiCloud, across all your drives.</p>
     </div>
+    <div class="row">
+      <button class="btn btn-secondary" (click)="load()" [disabled]="state() === 'loading'">
+        <app-icon name="refresh" [size]="16" /> Refresh
+      </button>
+      <a class="btn btn-primary" routerLink="/multicloudstorageapi/home"><app-icon name="upload" [size]="16" /> Upload</a>
+    </div>
+  </div>
+
+  <app-file-table
+    [rows]="rows()" [state]="state()" [errorText]="errorText()" [showDrive]="true" [busy]="actions.busy()"
+    emptyTitle="No files yet" emptyText="Files you upload from the dashboard will show up here."
+    (download)="actions.download($event)" (remove)="onDelete($event)" (retry)="load()">
+    <div toolbar class="seg">
+      <button [class.active]="driveFilter() === 'all'" (click)="driveFilter.set('all')">All <span class="cnt">{{ counts().all }}</span></button>
+      <button [class.active]="driveFilter() === 'google'" (click)="driveFilter.set('google')">
+        <img src="googledrive.png" alt="" /> Google <span class="cnt">{{ counts().google }}</span>
+      </button>
+      <button [class.active]="driveFilter() === 'onedrive'" (click)="driveFilter.set('onedrive')">
+        <img src="onedrive.png" alt="" /> OneDrive <span class="cnt">{{ counts().onedrive }}</span>
+      </button>
+    </div>
+  </app-file-table>
 </div>

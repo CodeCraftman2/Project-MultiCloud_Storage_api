@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { UserService } from './user.service';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
@@ -32,6 +33,14 @@ export class OnedriveService {
   getStorageDetails() {
     const headers = { Authorization: `Bearer ${this.oneDriveAccessToken}` };
     return this.http.get(this.apiUrl, { headers });
+  }
+
+  /** Storage quota in bytes for the given access token. */
+  getQuota(accessToken: string): Observable<{ used: number; total: number }> {
+    const headers = { Authorization: `Bearer ${accessToken}` };
+    return this.http.get<any>(this.apiUrl, { headers }).pipe(
+      map((data) => ({ used: Number(data.quota.used), total: Number(data.quota.total) }))
+    );
   }
 
   getOneDriveTotalSpace(): number {

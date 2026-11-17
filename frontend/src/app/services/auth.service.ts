@@ -11,11 +11,11 @@ export class AuthService {
   constructor(private http: HttpClient) {}
 
   initiateGoogleOAuth(): void {
-    window.location.href = `${this.baseUrl}/google`;
+    window.location.href = `${this.baseUrl}/google?userId=${localStorage.getItem('userId') ?? ''}`;
   }
 
   initiateOneDriveOAuth(): void {
-    window.location.href = `${this.baseUrl}/onedrive`;
+    window.location.href = `${this.baseUrl}/onedrive?userId=${localStorage.getItem('userId') ?? ''}`;
   }
 
 }

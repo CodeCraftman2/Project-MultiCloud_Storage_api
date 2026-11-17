@@ -1,52 +1,88 @@
-import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { BrowserModule } from '@angular/platform-browser';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { Router } from '@angular/router';
-import { ToastrModule, ToastrService } from 'ngx-toastr';
+import { Router, RouterLink } from '@angular/router';
+import { IconComponent } from '../shared/icon.component';
+import { AuthSideComponent } from '../login/auth-side.component';
+import { StatusService } from '../services/status.service';
+import { ToastService, errorMessage } from '../services/toast.service';
 import { UserService } from '../services/user.service';
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [FormsModule, CommonModule],
+  imports: [FormsModule, RouterLink, IconComponent, AuthSideComponent],
   templateUrl: './register.component.html',
-  styleUrl: './register.component.css'
+  styleUrl: '../login/login.component.css',
 })
 export class RegisterComponent {
-  
-  confpwd: string = '';
+  private userService = inject(UserService);
+  private router = inject(Router);
+  private toast = inject(ToastService);
+  readonly status = inject(StatusService);
 
-  user = {
-    username: '',
-    passwordHash: '',
-    email: '',
-  };
+  confpwd = '';
+  user = { username: '', passwordHash: '', email: '' };
 
-  constructor(private userService: UserService, private router: Router) {}
+  readonly showPassword = signal(false);
+  readonly submitting = signal(false);
+  readonly error = signal<string | null>(null);
+  readonly touched = signal(false);
+
+  get strength(): number {
+    const p = this.user.passwordHash;
+    if (!p) return 0;
+    let s = 0;
+    if (p.length >= 8) s++;
+    if (/[A-Z]/.test(p) && /[a-z]/.test(p)) s++;
+    if (/\d/.test(p)) s++;
+    if (/[^A-Za-z0-9]/.test(p)) s++;
+    return Math.max(1, s);
+  }
+
+  get strengthLabel(): string {
+    return ['', 'Weak', 'Fair', 'Good', 'Strong'][this.strength];
+  }
+
+  get emailValid(): boolean {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.user.email.trim());
+  }
+
+  get mismatch(): boolean {
+    return !!this.confpwd && this.confpwd !== this.user.passwordHash;
+  }
 
   onSubmit(): void {
-    if(this.user.username!==null && this.user.email!==null && this.user.passwordHash!==null && this.confpwd!==null &&
-      this.user.username!=='' && this.user.email!=='' && this.user.passwordHash!=='' && this.confpwd!=='' ){
-      if( this.user.passwordHash === this.confpwd ){
-        this.userService.register(this.user).subscribe({
-          next: (response) =>{
-            if(response.isSuccess){
-              alert(response.message + " Please Login to your Account.");
-              this.router.navigate(['multicloudstorageapi/login']);
-            }
-            else{
-              alert(response.message); 
-            }
-          },
-          error: (err) => alert('Error registering user: ' + err.message),
-        });
-        
-      }
+    this.touched.set(true);
+    const { username, email, passwordHash } = this.user;
+    if (!username.trim() || !email.trim() || !passwordHash || !this.confpwd) {
+      this.error.set('All fields are required.');
+      return;
     }
-    else{
-      alert('All fields must not be empty!!!');
+    if (!this.emailValid) {
+      this.error.set('Enter a valid email address.');
+      return;
     }
+    if (this.mismatch) {
+      this.error.set('Passwords do not match.');
+      return;
+    }
+    this.error.set(null);
+    this.submitting.set(true);
+
+    this.userService.register({ username: username.trim(), email: email.trim(), passwordHash }).subscribe({
+      next: (response) => {
+        this.submitting.set(false);
+        if (response?.isSuccess) {
+          this.toast.success('Account created', 'You can sign in now.');
+          this.router.navigate(['multicloudstorageapi/login']);
+        } else {
+          this.error.set(response?.message ?? 'Registration failed.');
+        }
+      },
+      error: (err) => {
+        this.submitting.set(false);
+        this.error.set(errorMessage(err));
+      },
+    });
   }
 }

@@ -1,0 +1,76 @@
+<div class="page">
+  <a class="back" routerLink="/multicloudstorageapi/home"><app-icon name="chevron-left" [size]="16" /> Dashboard</a>
+
+  <section class="card hero" [class]="'card hero ' + driveKey">
+    <div class="hero-main">
+      <div class="logo"><img [src]="drive().logo" [alt]="drive().name" /></div>
+      <div class="grow">
+        <div class="row">
+          <h2 class="name">{{ drive().name }}</h2>
+          @switch (drive().state) {
+            @case ('connected') { <span class="badge ok"><span class="dot ok"></span>Connected</span> }
+            @case ('loading') { <span class="badge muted"><span class="spinner" style="width:11px;height:11px"></span>Checking</span> }
+            @case ('error') { <span class="badge err">Status error</span> }
+            @default { <span class="badge muted"><span class="dot"></span>Not connected</span> }
+          }
+        </div>
+        <div class="account">
+          @if (drive().state === 'connected') { <app-icon name="mail" [size]="14" /> {{ drive().email }} }
+          @else if (drive().state === 'error') { {{ drive().error }} }
+          @else if (drive().state !== 'loading') { Link your account to browse and manage files here. }
+        </div>
+      </div>
+
+      <div class="hero-actions">
+        <button class="btn btn-secondary" (click)="refresh()"><app-icon name="refresh" [size]="16" /> Refresh</button>
+        @if (drive().state === 'connected') {
+          <button class="btn btn-primary" (click)="picker.click()" [disabled]="uploadProgress() !== null">
+            @if (uploadProgress() !== null) { <span class="spinner"></span> {{ uploadProgress()! >= 90 ? 'Finishing…' : uploadProgress() + '%' }} }
+            @else { <app-icon name="upload" [size]="16" /> Upload }
+          </button>
+          <input #picker type="file" hidden (change)="onUpload($event)" />
+        } @else if (drive().state !== 'loading') {
+          <button class="btn btn-primary" (click)="connect()"><app-icon name="link" [size]="16" /> Connect {{ drive().name }}</button>
+        }
+      </div>
+    </div>
+
+    @if (drive().state === 'connected') {
+      <div class="quota">
+        <div class="q-item">
+          <span class="q-label">Used</span>
+          <span class="q-value">{{ drive().used !== null ? formatBytes(drive().used) : '…' }}</span>
+        </div>
+        <div class="q-item">
+          <span class="q-label">Free</span>
+          <span class="q-value">{{ free() !== null ? formatBytes(free()) : '…' }}</span>
+        </div>
+        <div class="q-item">
+          <span class="q-label">Total</span>
+          <span class="q-value">{{ drive().total ? formatBytes(drive().total) : (drive().quotaLoading ? '…' : '—') }}</span>
+        </div>
+        <div class="q-bar">
+          <div class="row q-bar-head"><span>Storage</span><span class="mono">{{ pct() !== null ? pct() + '%' : '' }}</span></div>
+          <div class="progress" [class.indeterminate]="drive().quotaLoading"><span [style.width.%]="pct() ?? 0"></span></div>
+        </div>
+      </div>
+    }
+  </section>
+
+  @if (drive().state === 'disconnected') {
+    <div class="card">
+      <div class="empty">
+        <div class="empty-icon"><app-icon name="link" [size]="26" /></div>
+        <h3>{{ drive().name }} isn't connected yet</h3>
+        <p>You'll be sent to sign in with your {{ driveKey === 'google' ? 'Google' : 'Microsoft' }} account and grant access. Then come back here.</p>
+        <button class="btn btn-primary" (click)="connect()"><app-icon name="link" [size]="16" /> Connect {{ drive().name }}</button>
+      </div>
+    </div>
+  } @else {
+    <h3 class="section-title">Files in {{ drive().name }}</h3>
+    <app-file-table
+      [rows]="rows()" [state]="state()" [errorText]="errorText()" [busy]="actions.busy()"
+      [emptyTitle]="'This drive is empty'" [emptyText]="'Upload a file to see it here.'"
+      (download)="actions.download($event)" (remove)="onDelete($event)" (retry)="load()" />
+  }
+</div>

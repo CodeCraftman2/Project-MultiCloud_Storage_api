@@ -1,12 +1,17 @@
-<app-header></app-header>
-
-<div class="layout">
-    <app-sidebar></app-sidebar>
-    <div class="main-fragment">
-        <div class="inner-fragment">
-            <router-outlet />
-        </div>
+@if (isAuthPage()) {
+  <router-outlet />
+} @else {
+  <div class="shell" [class.nav-open]="navOpen()">
+    <app-sidebar class="sidebar" (navigate)="navOpen.set(false)" />
+    <div class="scrim" (click)="navOpen.set(false)"></div>
+    <div class="main">
+      <app-header [page]="page()" (toggleNav)="navOpen.set(!navOpen())" />
+      <main class="content">
+        <router-outlet />
+      </main>
     </div>
-</div>
+  </div>
+}
 
-<app-footer></app-footer>
+<app-statusbar />
+<app-toasts />

@@ -85,17 +85,20 @@ public class TokenManagementService {
      * Check and refresh the token if expired, update the database.
      */
     public String checkAndRefreshToken(Integer userId, Integer driveId) {
-        Optional<OAuthCredential> optionalOAuthCredential = oAuthCredentialRepository.findByDriveId(driveId);
+        Optional<OAuthCredential> optionalOAuthCredential = oAuthCredentialRepository.findByUserIdAndDriveId(userId, driveId);
 
         if (optionalOAuthCredential.isPresent()) {
             OAuthCredential oauthCredential = optionalOAuthCredential.get();
             String currentAccessToken = oauthCredential.getAccessToken();
             String currentRefreshToken = oauthCredential.getRefreshToken();
 
-            // Check if the token has expired
-            if (isTokenExpired(currentAccessToken)) {
+            // Google/Microsoft access tokens are opaque (not JWTs), so use the stored expiry time,
+            // refreshing a minute early to avoid using a token that is about to expire
+            Instant expiresAt = oauthCredential.getExpiresAt();
+            if (expiresAt == null || expiresAt.isBefore(Instant.now().plusSeconds(60))) {
                 String newAccessToken = refreshAccessToken(currentRefreshToken, driveId);
                 oauthCredential.setAccessToken(newAccessToken);
+                oauthCredential.setExpiresAt(Instant.now().plusSeconds(3600));
                 oAuthCredentialRepository.save(oauthCredential); // Save updated access token
 
                 return newAccessToken;

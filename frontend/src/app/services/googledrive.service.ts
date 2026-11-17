@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { UserService } from './user.service';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
@@ -33,6 +34,14 @@ export class GoogledriveService {
   getStorageDetails() {
     const headers = { Authorization: `Bearer ${this.googleAccessToken}` };
     return this.http.get(`${this.apiUrl}?fields=storageQuota`, { headers });
+  }
+
+  /** Storage quota in bytes for the given access token. */
+  getQuota(accessToken: string): Observable<{ used: number; total: number }> {
+    const headers = { Authorization: `Bearer ${accessToken}` };
+    return this.http.get<any>(`${this.apiUrl}?fields=storageQuota`, { headers }).pipe(
+      map((data) => ({ used: Number(data.storageQuota.usage), total: Number(data.storageQuota.limit) }))
+    );
   }
 
   getGoogleDriveTotalSpace(): number {
