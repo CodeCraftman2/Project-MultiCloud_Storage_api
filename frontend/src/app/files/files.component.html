@@ -1,0 +1,29 @@
+<div class="page">
+  <div class="page-head">
+    <div>
+      <h2 class="page-title">My Files</h2>
+      <p class="page-sub">Every file you've uploaded through MultiCloud, across all your drives.</p>
+    </div>
+    <div class="row">
+      <button class="btn btn-secondary" (click)="load()" [disabled]="state() === 'loading'">
+        <app-icon name="refresh" [size]="16" /> Refresh
+      </button>
+      <a class="btn btn-primary" routerLink="/multicloudstorageapi/home"><app-icon name="upload" [size]="16" /> Upload</a>
+    </div>
+  </div>
+
+  <app-file-table
+    [rows]="rows()" [state]="state()" [errorText]="errorText()" [showDrive]="true" [busy]="actions.busy()"
+    emptyTitle="No files yet" emptyText="Files you upload from the dashboard will show up here."
+    (download)="actions.download($event)" (remove)="onDelete($event)" (retry)="load()">
+    <div toolbar class="seg">
+      <button [class.active]="driveFilter() === 'all'" (click)="driveFilter.set('all')">All <span class="cnt">{{ counts().all }}</span></button>
+      <button [class.active]="driveFilter() === 'google'" (click)="driveFilter.set('google')">
+        <img src="googledrive.png" alt="" /> Google <span class="cnt">{{ counts().google }}</span>
+      </button>
+      <button [class.active]="driveFilter() === 'onedrive'" (click)="driveFilter.set('onedrive')">
+        <img src="onedrive.png" alt="" /> OneDrive <span class="cnt">{{ counts().onedrive }}</span>
+      </button>
+    </div>
+  </app-file-table>
+</div>

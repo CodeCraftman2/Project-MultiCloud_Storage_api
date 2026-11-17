@@ -1,0 +1,56 @@
+<div class="auth">
+  <app-auth-side class="auth-side" />
+
+  <div class="auth-main">
+    <form class="auth-card" (ngSubmit)="onLogin()" novalidate>
+      <div class="auth-icon"><app-icon name="lock" [size]="22" /></div>
+      <h1>Welcome back</h1>
+      <p class="sub">Sign in to manage your cloud files.</p>
+
+      @if (status.backend() === 'offline') {
+        <div class="banner warn">
+          <app-icon name="alert" [size]="16" />
+          <span>The backend isn't reachable right now. Start the Spring Boot server, then try again.</span>
+        </div>
+      }
+
+      @if (error()) {
+        <div class="banner err" role="alert">
+          <app-icon name="alert" [size]="16" />
+          <span>{{ error() }}</span>
+        </div>
+      }
+
+      <label class="field">
+        <span class="field-label">Username</span>
+        <span class="input-wrap">
+          <span class="lead"><app-icon name="user" [size]="17" /></span>
+          <input class="input" type="text" name="username" autocomplete="username" placeholder="your-username"
+                 [(ngModel)]="credentials.username" autofocus />
+        </span>
+      </label>
+
+      <label class="field">
+        <span class="field-label row">Password <span class="grow"></span><a class="forgot" tabindex="-1">Forgot password?</a></span>
+        <span class="input-wrap">
+          <span class="lead"><app-icon name="lock" [size]="17" /></span>
+          <input class="input" [type]="showPassword() ? 'text' : 'password'" name="password" autocomplete="current-password"
+                 placeholder="••••••••" [(ngModel)]="credentials.password" />
+          <span class="trail">
+            <button type="button" class="icon-btn" (click)="showPassword.set(!showPassword())"
+                    [attr.aria-label]="showPassword() ? 'Hide password' : 'Show password'">
+              <app-icon [name]="showPassword() ? 'eye-off' : 'eye'" [size]="17" />
+            </button>
+          </span>
+        </span>
+      </label>
+
+      <button type="submit" class="btn btn-primary btn-block lg" [disabled]="submitting()">
+        @if (submitting()) { <span class="spinner"></span> Signing in… }
+        @else { Sign in <app-icon name="arrow-right" [size]="16" /> }
+      </button>
+
+      <p class="switch">Don't have an account? <a routerLink="/multicloudstorageapi/register">Create one</a></p>
+    </form>
+  </div>
+</div>

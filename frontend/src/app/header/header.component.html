@@ -1,0 +1,82 @@
+<header class="bar">
+  <button class="icon-btn menu-btn" (click)="toggleNav.emit()" aria-label="Toggle navigation">
+    <app-icon name="menu" />
+  </button>
+
+  <div class="crumbs grow">
+    @if (page.parent) {
+      <a routerLink="/multicloudstorageapi/home" class="crumb-parent">{{ page.parent }}</a>
+      <span class="crumb-sep">/</span>
+    }
+    <h1 class="crumb-title truncate">{{ page.title }}</h1>
+  </div>
+
+  <!-- Live activity -->
+  @if (status.busy()) {
+    <div class="activity" title="Requests in flight: {{ status.active().length }}">
+      <span class="spinner"></span>
+      <span class="truncate">{{ status.currentLabel() }}…</span>
+      @if (status.active().length > 1) { <span class="activity-count">+{{ status.active().length - 1 }}</span> }
+    </div>
+  }
+
+  <!-- Backend health -->
+  @switch (status.backend()) {
+    @case ('online') {
+      <span class="badge ok health" title="Spring Boot backend is reachable">
+        <span class="dot ok"></span> Backend online
+        @if (status.latency() !== null) { <span class="lat">{{ status.latency() }} ms</span> }
+      </span>
+    }
+    @case ('offline') {
+      <button class="badge err health clickable" (click)="status.ping()" title="Backend unreachable. Click to retry.">
+        <span class="dot err pulse"></span> Backend offline
+      </button>
+    }
+    @default {
+      <span class="badge muted health"><span class="spinner tiny"></span> Connecting…</span>
+    }
+  }
+
+  <button class="icon-btn" (click)="refresh()" [disabled]="status.busy()" title="Refresh status, profile and drives">
+    <app-icon name="refresh" [class.spinning]="status.busy()" />
+  </button>
+
+  <!-- User -->
+  <div class="user-menu">
+    <button class="user-btn" (click)="menuOpen.set(!menuOpen())" [class.open]="menuOpen()">
+      <span class="avatar">
+        @if (users.userState() === 'loading' && !users.currentUser()) { <span class="spinner tiny"></span> }
+        @else { {{ users.initials() }} }
+      </span>
+      <span class="user-text">
+        @if (users.currentUser(); as u) {
+          <span class="user-name truncate">{{ u.username }}</span>
+          <span class="user-email truncate">{{ u.email }}</span>
+        } @else if (users.userState() === 'loading') {
+          <span class="skeleton" style="width: 90px; height: 12px"></span>
+          <span class="skeleton" style="width: 120px; height: 10px; margin-top: 5px"></span>
+        } @else {
+          <span class="user-name">Account</span>
+          <span class="user-email">Profile unavailable</span>
+        }
+      </span>
+      <app-icon name="chevron-down" [size]="16" class="chev" />
+    </button>
+
+    @if (menuOpen()) {
+      <div class="dropdown card">
+        <a class="dd-item" routerLink="/multicloudstorageapi/profile" (click)="menuOpen.set(false)">
+          <app-icon name="user" [size]="16" /> Profile
+        </a>
+        <a class="dd-item" routerLink="/multicloudstorageapi/files" (click)="menuOpen.set(false)">
+          <app-icon name="files" [size]="16" /> My files
+        </a>
+        <div class="dd-sep"></div>
+        <button class="dd-item danger" (click)="logout()">
+          <app-icon name="logout" [size]="16" /> Sign out
+        </button>
+      </div>
+    }
+  </div>
+</header>

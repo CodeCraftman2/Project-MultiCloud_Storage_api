@@ -18,6 +18,7 @@ import com.multicloudstorageapi.api.repositories.FileRepository;
 import com.multicloudstorageapi.api.repositories.OAuthCredentialRepository;
 import com.multicloudstorageapi.api.repositories.UserRepository;
 import com.multicloudstorageapi.api.services.AuthenticationService;
+import com.multicloudstorageapi.api.services.TokenManagementService;
 
 import utils.PasswordUtils;
 
@@ -34,6 +35,9 @@ public class UserController {
     
     @Autowired
     private OAuthCredentialRepository oAuthCredentialRepository;
+
+    @Autowired
+    private TokenManagementService tokenManagementService;
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody User user) {
@@ -114,8 +118,15 @@ public class UserController {
     	Optional<OAuthCredential> optionalCredentials = oAuthCredentialRepository.findByUserIdAndDriveId(userId, driveId);
     	if(optionalCredentials.isPresent()) {
     		OAuthCredential credentials = optionalCredentials.get();
+    		String accessToken = credentials.getAccessToken();
+    		try {
+    			// Refresh the access token first if it has expired
+    			accessToken = tokenManagementService.checkAndRefreshToken(userId, driveId);
+    		} catch (Exception e) {
+    			response.put("refreshError", e.getMessage());
+    		}
     		response.put("isExist", true);
-    		response.put("accesstoken", credentials.getAccessToken());
+    		response.put("accesstoken", accessToken);
     		response.put("refreshtoken", credentials.getRefreshToken());
     		response.put("email", credentials.getEmail());
     		return ResponseEntity.ok(response); 

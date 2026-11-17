@@ -1,0 +1,80 @@
+<div class="auth">
+  <app-auth-side class="auth-side" />
+
+  <div class="auth-main">
+    <form class="auth-card wide" (ngSubmit)="onSubmit()" novalidate>
+      <div class="auth-icon"><app-icon name="user" [size]="22" /></div>
+      <h1>Create your account</h1>
+      <p class="sub">It takes less than a minute.</p>
+
+      @if (status.backend() === 'offline') {
+        <div class="banner warn">
+          <app-icon name="alert" [size]="16" />
+          <span>The backend isn't reachable right now. Start the Spring Boot server, then try again.</span>
+        </div>
+      }
+
+      @if (error()) {
+        <div class="banner err" role="alert">
+          <app-icon name="alert" [size]="16" />
+          <span>{{ error() }}</span>
+        </div>
+      }
+
+      <label class="field">
+        <span class="field-label">Username</span>
+        <span class="input-wrap">
+          <span class="lead"><app-icon name="user" [size]="17" /></span>
+          <input class="input" type="text" name="username" autocomplete="username" placeholder="Pick a username"
+                 [(ngModel)]="user.username" [class.invalid]="touched() && !user.username.trim()" autofocus />
+        </span>
+      </label>
+
+      <label class="field">
+        <span class="field-label">Email</span>
+        <span class="input-wrap">
+          <span class="lead"><app-icon name="mail" [size]="17" /></span>
+          <input class="input" type="email" name="email" autocomplete="email" placeholder="you@example.com"
+                 [(ngModel)]="user.email" [class.invalid]="(touched() || user.email) && !emailValid" />
+        </span>
+      </label>
+
+      <div class="two">
+        <label class="field">
+          <span class="field-label">Password</span>
+          <span class="input-wrap">
+            <input class="input pad-r" [type]="showPassword() ? 'text' : 'password'" name="passwordHash" autocomplete="new-password"
+                   placeholder="••••••••" [(ngModel)]="user.passwordHash" [class.invalid]="touched() && !user.passwordHash" />
+            <span class="trail">
+              <button type="button" class="icon-btn" (click)="showPassword.set(!showPassword())"
+                      [attr.aria-label]="showPassword() ? 'Hide password' : 'Show password'">
+                <app-icon [name]="showPassword() ? 'eye-off' : 'eye'" [size]="17" />
+              </button>
+            </span>
+          </span>
+        </label>
+
+        <label class="field">
+          <span class="field-label">Confirm password</span>
+          <input class="input" [type]="showPassword() ? 'text' : 'password'" name="confpwd" autocomplete="new-password"
+                 placeholder="••••••••" [(ngModel)]="confpwd" [class.invalid]="mismatch || (touched() && !confpwd)" />
+        </label>
+      </div>
+
+      @if (user.passwordHash) {
+        <div class="field">
+          <div class="strength s{{ strength }}"><span></span><span></span><span></span><span></span></div>
+          <span class="field-hint">Password strength: <b>{{ strengthLabel }}</b></span>
+        </div>
+      }
+      @if (mismatch) { <span class="field-error">Passwords don't match.</span> }
+
+      <button type="submit" class="btn btn-primary btn-block lg" [disabled]="submitting()">
+        @if (submitting()) { <span class="spinner"></span> Creating account… }
+        @else { Create account <app-icon name="arrow-right" [size]="16" /> }
+      </button>
+
+      <p class="switch">Already have an account? <a routerLink="/multicloudstorageapi/login">Sign in</a></p>
+    </form>
+  </div>
+</div>

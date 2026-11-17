@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -25,12 +26,18 @@ public class OneDriveService {
     @Autowired
     private OAuthCredentialRepository oAuthCredentiaRepository;
 
+    @Autowired
+    private TokenManagementService tokenManagementService;
+
     private String oneDriveBaseUrl = "https://graph.microsoft.com/v1.0";
 
     // List files and folders from OneDrive
-    public List<DriveItem> listFiles(Integer userId) {
-        String url = oneDriveBaseUrl + "/me/drive/root/children";
-        return makeRequest(url, HttpMethod.GET, null, userId, List.class);
+    @SuppressWarnings("unchecked")
+    public List<Map<String, Object>> listFiles(Integer userId) {
+        // Graph wraps the items in {"value": [...]}
+        String url = oneDriveBaseUrl + "/me/drive/root/children?$select=id,name,size,file,folder,createdDateTime";
+        Map<String, Object> body = makeRequest(url, HttpMethod.GET, null, userId, Map.class);
+        return body != null && body.get("value") != null ? (List<Map<String, Object>>) body.get("value") : List.of();
     }
 
     // Upload a file to OneDrive
@@ -73,9 +80,16 @@ public class OneDriveService {
 
     // Get access token for the user
     private String getAccessToken(Integer userId) {
-        Optional<OAuthCredential> optionalCredential = oAuthCredentiaRepository.findByUserId(userId);
-        return optionalCredential.map(OAuthCredential::getAccessToken)
-                                 .orElseThrow(() -> new RuntimeException("Access token not found"));
+        if (userId == null || userId <= 0) {
+            throw new IllegalArgumentException("Not logged in: a valid userId is required.");
+        }
+        // Drive ID 2 = OneDrive; looking up by user only could return the Google Drive token
+        Optional<OAuthCredential> optionalCredential = oAuthCredentiaRepository.findByUserIdAndDriveId(userId, 2);
+        if (optionalCredential.isEmpty()) {
+            throw new IllegalStateException("OneDrive is not connected for user ID: " + userId);
+        }
+        // Refreshes and saves a new token when the stored one has expired
+        return tokenManagementService.checkAndRefreshToken(userId, 2);
     }
 }
 

@@ -1,0 +1,263 @@
+<div class="page">
+  <div class="page-head">
+    <div>
+      <h2 class="page-title">
+        {{ greeting() }}{{ users.currentUser() ? ', ' + users.currentUser()!.username : '' }}
+        <span class="wave">👋</span>
+      </h2>
+      <p class="page-sub">Here's what's happening across your cloud storage.</p>
+    </div>
+    <div class="row">
+      <button class="btn btn-secondary" (click)="refresh()" [disabled]="status.busy()">
+        <app-icon name="refresh" [size]="16" [class.spinning]="status.busy()" /> Refresh
+      </button>
+      <button class="btn btn-primary" (click)="openFileChooser(fileInput)">
+        <app-icon name="upload" [size]="16" /> Upload files
+      </button>
+    </div>
+  </div>
+
+  <!-- ===== Stat tiles ===== -->
+  <section class="stats">
+    <div class="card stat">
+      <div class="stat-ico" [class]="'stat-ico ' + (status.backend() === 'online' ? 'ok' : status.backend() === 'offline' ? 'err' : 'muted')">
+        <app-icon name="server" />
+      </div>
+      <div class="grow">
+        <div class="stat-label">Backend</div>
+        <div class="stat-value">
+          @switch (status.backend()) {
+            @case ('online') { Online }
+            @case ('offline') { Offline }
+            @default { Checking… }
+          }
+        </div>
+        <div class="stat-foot">
+          @if (status.latency() !== null) { {{ status.latency() }} ms response }
+          @else if (status.backend() === 'offline') { <a (click)="status.ping()" class="link">Retry now</a> }
+          @else { Waiting for first ping }
+        </div>
+      </div>
+    </div>
+
+    <div class="card stat">
+      <div class="stat-ico brand"><app-icon name="cloud" /></div>
+      <div class="grow">
+        <div class="stat-label">Drives connected</div>
+        <div class="stat-value">{{ drives.connectedCount() }}<span class="of">/2</span></div>
+        <div class="stat-foot">
+          @if (drives.connectedCount() === 2) { All drives linked }
+          @else if (drives.all()[0].state === 'loading' || drives.all()[1].state === 'loading') { Checking connections… }
+          @else { {{ 2 - drives.connectedCount() }} waiting to connect }
+        </div>
+      </div>
+    </div>
+
+    <div class="card stat">
+      <div class="stat-ico info"><app-icon name="files" /></div>
+      <div class="grow">
+        <div class="stat-label">Files tracked</div>
+        <div class="stat-value">
+          @if (filesState() === 'loading') { <span class="skeleton" style="display:inline-block;width:40px;height:24px"></span> }
+          @else if (filesState() === 'error') { — }
+          @else { {{ files().length }} }
+        </div>
+        <div class="stat-foot">Uploaded through MultiCloud</div>
+      </div>
+    </div>
+
+    <div class="card stat">
+      <div class="stat-ico warn"><app-icon name="hard-drive" /></div>
+      <div class="grow">
+        <div class="stat-label">Storage used</div>
+        <div class="stat-value">{{ drives.totals().total ? formatBytes(drives.totals().used) : '—' }}</div>
+        <div class="stat-foot">
+          @if (drives.totals().total) { of {{ formatBytes(drives.totals().total) }} combined }
+          @else { Connect a drive to see usage }
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Drives ===== -->
+  <h3 class="section-title">Your drives</h3>
+  <section class="drives">
+    @for (d of drives.all(); track d.key) {
+      <article class="card card-hover drive" [class]="'card card-hover drive ' + d.key" (click)="openDrive(d)" tabindex="0" (keydown.enter)="openDrive(d)">
+        <div class="drive-top">
+          <div class="drive-logo"><img [src]="d.logo" [alt]="d.name" /></div>
+          <div class="grow">
+            <div class="drive-name">{{ d.name }}</div>
+            <div class="drive-email truncate">
+              @switch (d.state) {
+                @case ('connected') { <app-icon name="mail" [size]="13" /> {{ d.email }} }
+                @case ('loading') { <span class="skeleton" style="display:inline-block;width:140px;height:12px"></span> }
+                @case ('error') { Couldn't check status }
+                @default { No account linked }
+              }
+            </div>
+          </div>
+          @switch (d.state) {
+            @case ('connected') { <span class="badge ok"><span class="dot ok"></span>Connected</span> }
+            @case ('loading') { <span class="badge muted"><span class="spinner" style="width:11px;height:11px"></span>Checking</span> }
+            @case ('error') { <span class="badge err">Error</span> }
+            @default { <span class="badge muted"><span class="dot"></span>Not connected</span> }
+          }
+        </div>
+
+        @if (d.state === 'connected') {
+          <div class="usage">
+            <div class="usage-row">
+              @if (d.used !== null) { <span>{{ formatBytes(d.used) }} used</span> }
+              @else if (d.quotaLoading) { <span class="muted">Reading storage…</span> }
+              @else { <span class="muted">Storage usage unavailable</span> }
+              <span class="muted">{{ d.total ? 'of ' + formatBytes(d.total) : '' }}</span>
+            </div>
+            <div class="progress" [class.indeterminate]="d.quotaLoading">
+              <span [style.width.%]="percent(d.used, d.total) ?? 0"
+                    [class.hot]="(percent(d.used, d.total) ?? 0) > 85"></span>
+            </div>
+            <div class="usage-row small">
+              <span class="muted">
+                @if (percent(d.used, d.total) !== null) { {{ percent(d.used, d.total) }}% full }
+              </span>
+              <span class="open">Open drive <app-icon name="arrow-right" [size]="14" /></span>
+            </div>
+          </div>
+        } @else if (d.state === 'error') {
+          <div class="drive-cta">
+            <p class="muted small-text">{{ d.error }}</p>
+            <button class="btn btn-secondary btn-sm" (click)="$event.stopPropagation(); drives.refresh(d.key)">
+              <app-icon name="refresh" [size]="14" /> Retry
+            </button>
+          </div>
+        } @else if (d.state !== 'loading') {
+          <div class="drive-cta">
+            <p class="muted small-text">Link your {{ d.name }} account to browse and upload files.</p>
+            <button class="btn btn-primary btn-sm" (click)="connect(d, $event)">
+              <app-icon name="link" [size]="14" /> Connect {{ d.name }}
+            </button>
+          </div>
+        } @else {
+          <div class="usage">
+            <div class="skeleton" style="height:12px;width:60%"></div>
+            <div class="skeleton" style="height:8px;margin-top:10px"></div>
+          </div>
+        }
+      </article>
+    }
+  </section>
+
+  <!-- ===== Upload + activity ===== -->
+  <section class="split">
+    <div class="card upload-card">
+      <div class="card-head">
+        <h3 class="section-title"><app-icon name="upload" [size]="17" /> Upload</h3>
+        <div class="targets">
+          <span class="muted small-text">Send to</span>
+          @for (d of drives.all(); track d.key) {
+            <button class="chip" [class.on]="targets()[d.key]" (click)="toggleTarget(d.key)"
+                    [title]="d.state === 'connected' ? '' : d.name + ' is not connected'">
+              <img [src]="d.logo" alt="" />
+              {{ d.name }}
+              @if (targets()[d.key]) { <app-icon name="check" [size]="13" [stroke]="3" /> }
+              @if (d.state !== 'connected' && d.state !== 'loading') { <span class="dot warn"></span> }
+            </button>
+          }
+        </div>
+      </div>
+
+      <div class="dropzone" [class.drag]="dragging()"
+           (dragover)="onDragOver($event)" (dragleave)="onDragLeave($event)" (drop)="onDrop($event)"
+           (click)="openFileChooser(fileInput)" role="button" tabindex="0" (keydown.enter)="openFileChooser(fileInput)">
+        <div class="dz-ico"><app-icon name="cloud" [size]="26" /></div>
+        <div class="dz-title">@if (dragging()) { Drop to upload } @else { Drag & drop files here }</div>
+        <div class="muted small-text">or <span class="link">browse your computer</span>. You can pick several files.</div>
+        <input type="file" #fileInput (change)="onFileSelected($event)" hidden multiple />
+      </div>
+
+      @if (uploads().length) {
+        <div class="queue-head">
+          <span class="small-text muted">
+            @if (uploading()) { <span class="spinner" style="width:11px;height:11px;display:inline-block;vertical-align:-1px"></span> Uploading… }
+            @else { Recent uploads }
+          </span>
+          <button class="btn btn-ghost btn-sm" (click)="clearFinished()" [disabled]="uploading() && uploads().length === 1">Clear finished</button>
+        </div>
+        <ul class="queue">
+          @for (u of uploads(); track u.id) {
+            <li class="q-item" [class]="'q-item ' + u.state">
+              <div class="file-icon {{ fileKind(null, u.name).cls }}">{{ fileKind(null, u.name).label }}</div>
+              <div class="grow">
+                <div class="row">
+                  <span class="file-name grow">{{ u.name }}</span>
+                  @switch (u.state) {
+                    @case ('done') { <span class="badge ok"><app-icon name="check" [size]="12" [stroke]="3" /> Done</span> }
+                    @case ('error') { <span class="badge err">Failed</span> }
+                    @default { <span class="mono muted">{{ u.progress }}%</span> }
+                  }
+                </div>
+                <div class="file-meta">{{ formatBytes(u.size) }} · {{ driveName(u.drive) }}
+                  @if (u.state === 'uploading' && u.progress >= 90) { · Sending to cloud… }
+                  @if (u.error) { · <span class="err-text">{{ u.error }}</span> }
+                </div>
+                @if (u.state === 'uploading') {
+                  <div class="progress thin" [class.indeterminate]="u.progress >= 90"><span [style.width.%]="u.progress"></span></div>
+                }
+              </div>
+            </li>
+          }
+        </ul>
+      }
+    </div>
+
+    <div class="side-col">
+      <div class="card">
+        <div class="card-head">
+          <h3 class="section-title"><app-icon name="files" [size]="17" /> Recent files</h3>
+          <a routerLink="/multicloudstorageapi/files" class="small-text">View all</a>
+        </div>
+        @if (filesState() === 'loading') {
+          @for (i of [1, 2, 3]; track i) {
+            <div class="mini-row"><div class="skeleton" style="width:36px;height:36px;border-radius:10px"></div>
+              <div class="grow"><div class="skeleton" style="height:12px;width:70%"></div><div class="skeleton" style="height:10px;width:40%;margin-top:6px"></div></div></div>
+          }
+        } @else if (filesState() === 'error') {
+          <div class="empty error small"><p>Couldn't load files.</p><button class="btn btn-secondary btn-sm" (click)="loadFiles()">Retry</button></div>
+        } @else {
+          @for (f of recentFiles(); track f.fileId) {
+            <div class="mini-row">
+              <div class="file-icon {{ fileKind(f.fileType, f.fileName).cls }}">{{ fileKind(f.fileType, f.fileName).label }}</div>
+              <div class="grow">
+                <div class="file-name">{{ f.fileName }}</div>
+                <div class="file-meta">{{ formatBytes(f.fileSize) }} · {{ f.createdAt | date: 'MMM d, y' }}</div>
+              </div>
+              <img class="mini-logo" [src]="f.driveId === 2 ? 'onedrive.png' : 'googledrive.png'" alt="" />
+            </div>
+          } @empty {
+            <div class="empty small"><p class="muted">No uploads yet. Drop a file on the left to get started.</p></div>
+          }
+        }
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <h3 class="section-title"><app-icon name="activity" [size]="17" /> Live activity</h3>
+          @if (status.busy()) { <span class="badge"><span class="spinner" style="width:10px;height:10px"></span>{{ status.active().length }} running</span> }
+        </div>
+        @for (a of status.active(); track a.id) {
+          <div class="act-row running"><span class="spinner"></span><span class="grow truncate">{{ a.label }}…</span></div>
+        }
+        @for (e of recentActivity(); track e.id) {
+          <div class="act-row" [class.failed]="!e.ok">
+            <span class="act-dot"></span>
+            <span class="grow truncate">{{ e.label }}</span>
+            <span class="mono muted">{{ e.ms }} ms</span>
+          </div>
+        } @empty {
+          @if (!status.busy()) { <div class="empty small"><p class="muted">Nothing yet.</p></div> }
+        }
+      </div>
+    </div>
+  </section>
+</div>

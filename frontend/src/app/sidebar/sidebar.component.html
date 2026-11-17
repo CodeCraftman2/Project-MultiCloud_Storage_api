@@ -1,0 +1,59 @@
+<nav class="side">
+  <a class="brand" routerLink="/multicloudstorageapi/home" (click)="navigate.emit()">
+    <span class="brand-mark"><app-icon name="cloud" [size]="20" [stroke]="2.2" /></span>
+    <span class="brand-text">
+      <strong>MultiCloud</strong>
+      <small>File Storage</small>
+    </span>
+  </a>
+
+  <div class="group">
+    <div class="group-label">Workspace</div>
+    @for (item of workspace; track item.link) {
+      <a class="nav-item" [routerLink]="item.link" routerLinkActive="active"
+         [routerLinkActiveOptions]="{ exact: !!item.exact }" (click)="navigate.emit()">
+        <app-icon [name]="item.icon" />
+        <span>{{ item.label }}</span>
+      </a>
+    }
+  </div>
+
+  <div class="group">
+    <div class="group-label">Cloud drives</div>
+    @for (d of drives.all(); track d.key) {
+      <a class="nav-item" [routerLink]="d.route" routerLinkActive="active" (click)="navigate.emit()">
+        <img [src]="d.logo" alt="" class="drive-logo" />
+        <span class="grow">{{ d.name }}</span>
+        @switch (d.state) {
+          @case ('connected') { <span class="dot ok" title="Connected"></span> }
+          @case ('disconnected') { <span class="dot" title="Not connected"></span> }
+          @case ('error') { <span class="dot err" title="Error checking status"></span> }
+          @case ('loading') { <span class="spinner mini" title="Checking…"></span> }
+        }
+      </a>
+    }
+  </div>
+
+  <div class="group">
+    <div class="group-label">Account</div>
+    @for (item of account; track item.link) {
+      <a class="nav-item" [routerLink]="item.link" routerLinkActive="active" (click)="navigate.emit()">
+        <app-icon [name]="item.icon" />
+        <span>{{ item.label }}</span>
+      </a>
+    }
+  </div>
+
+  <div class="storage">
+    <div class="storage-head">
+      <app-icon name="hard-drive" [size]="16" />
+      <span>Combined storage</span>
+      @if (usedPct() !== null) { <span class="pct">{{ usedPct() }}%</span> }
+    </div>
+    <div class="progress" [class.indeterminate]="drives.all()[0].quotaLoading || drives.all()[1].quotaLoading">
+      <span [style.width.%]="usedPct() ?? 0"></span>
+    </div>
+    <div class="storage-foot">{{ usedText() }}</div>
+    <div class="storage-foot">{{ drives.connectedCount() }} of 2 drives connected</div>
+  </div>
+</nav>

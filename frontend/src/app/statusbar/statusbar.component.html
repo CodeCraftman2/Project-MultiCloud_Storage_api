@@ -1,0 +1,91 @@
+@if (logOpen()) {
+  <section class="log" role="dialog" aria-label="Activity log">
+    <div class="log-head">
+      <app-icon name="activity" [size]="16" />
+      <strong>Activity</strong>
+      <span class="muted">last {{ status.log().length }} requests</span>
+      <span class="grow"></span>
+      <button class="lbtn" (click)="status.ping()"><app-icon name="server" [size]="14" /> Check backend</button>
+      <button class="lbtn" (click)="status.clearLog()" [disabled]="!status.log().length">Clear</button>
+      <button class="lbtn icon" (click)="logOpen.set(false)" aria-label="Close"><app-icon name="x" [size]="14" /></button>
+    </div>
+
+    <div class="log-body">
+      @for (a of status.active(); track a.id) {
+        <div class="log-row running">
+          <span class="spinner"></span>
+          <span class="grow truncate">{{ a.label }}</span>
+          <span class="tag">running</span>
+        </div>
+      }
+      @for (e of status.log(); track e.id) {
+        <div class="log-row" [class.failed]="!e.ok">
+          <span class="ico"><app-icon [name]="e.ok ? 'check' : 'x'" [size]="13" [stroke]="3" /></span>
+          <span class="grow truncate">{{ e.label }}</span>
+          <span class="tag">{{ e.status || 'no response' }}</span>
+          <span class="ms">{{ e.ms }} ms</span>
+          <span class="time">{{ e.at | date: 'HH:mm:ss' }}</span>
+        </div>
+      } @empty {
+        @if (!status.active().length) {
+          <div class="log-empty">No requests yet. Activity appears here as the app talks to the backend.</div>
+        }
+      }
+    </div>
+  </section>
+}
+
+<footer class="bar">
+  <!-- Backend -->
+  <button class="seg-item" (click)="status.ping()" title="Click to re-check the backend">
+    @switch (status.backend()) {
+      @case ('online') { <span class="dot ok"></span> Backend connected }
+      @case ('offline') { <span class="dot err pulse"></span> Backend unreachable }
+      @default { <span class="spinner"></span> Connecting to backend }
+    }
+    @if (status.latency() !== null) { <span class="mono dim">{{ status.latency() }} ms</span> }
+  </button>
+
+  <span class="seg-item hide-sm dim"><app-icon name="server" [size]="13" /> <span class="mono">{{ apiHost }}</span></span>
+
+  <!-- Current activity -->
+  <span class="seg-item activity">
+    @if (status.busy()) {
+      <span class="spinner"></span>
+      <span class="truncate">{{ status.currentLabel() }}…</span>
+    } @else if (status.backend() === 'offline') {
+      <app-icon name="alert" [size]="13" /> <span class="truncate">Start the Spring Boot server on port 8080</span>
+    } @else {
+      <app-icon name="check" [size]="13" /> Idle
+    }
+  </span>
+
+  <span class="grow"></span>
+
+  <!-- Session -->
+  @if (users.isLoggedIn()) {
+    <span class="seg-item hide-sm">
+      @switch (users.userState()) {
+        @case ('loading') { <span class="spinner"></span> Fetching user info }
+        @case ('loaded') { <app-icon name="user" [size]="13" /> {{ users.currentUser()?.username }} }
+        @case ('error') { <app-icon name="alert" [size]="13" /> User info unavailable }
+        @default { <app-icon name="user" [size]="13" /> Signed in }
+      }
+    </span>
+    <span class="seg-item hide-sm">
+      <app-icon name="cloud" [size]="13" /> {{ drives.connectedCount() }}/2 drives
+    </span>
+  } @else {
+    <span class="seg-item hide-sm dim"><app-icon name="lock" [size]="13" /> Not signed in</span>
+  }
+
+  @if (status.lastSync(); as t) {
+    <span class="seg-item hide-sm dim"><app-icon name="clock" [size]="13" /> Synced {{ t | date: 'HH:mm:ss' }}</span>
+  }
+
+  <button class="seg-item log-toggle" [class.on]="logOpen()" (click)="logOpen.set(!logOpen())">
+    <app-icon name="activity" [size]="13" /> Activity
+    @if (status.errorCount()) { <span class="err-count">{{ status.errorCount() }}</span> }
+    <app-icon [name]="logOpen() ? 'chevron-down' : 'chevron-up'" [size]="13" />
+  </button>
+</footer>

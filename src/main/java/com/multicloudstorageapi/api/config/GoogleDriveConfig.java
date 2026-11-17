@@ -41,15 +41,23 @@ public class GoogleDriveConfig {
         if (userId == null) {
             throw new RuntimeException("User not authenticated or invalid principal.");
         }
+        return getDriveForUser(userId);
+    }
 
-        // Fetch OAuth credentials for the user
-        OAuthCredential credentials = oAuthCredentialRepository.findByUserIdAndDriveId(userId, 1)
-                .orElseThrow(() -> new RuntimeException("No Google Drive credentials found for user ID: " + userId));
-
-        // Check if the token is expired and refresh it if necessary
-        if (isTokenExpired(credentials)) {
-            refreshAccessToken(credentials, userId);
+    /**
+     * Creates a Google Drive client for the given app user, refreshing the access token if it has expired.
+     */
+    public Drive getDriveForUser(Integer userId) throws Exception {
+        if (userId == null || userId <= 0) {
+            throw new IllegalArgumentException("Not logged in: a valid userId is required.");
         }
+
+        oAuthCredentialRepository.findByUserIdAndDriveId(userId, 1)
+                .orElseThrow(() -> new IllegalStateException("Google Drive is not connected for user ID: " + userId));
+
+        // Refreshes and saves a new token when the stored one has expired
+        tokenManagementService.checkAndRefreshToken(userId, 1);
+        OAuthCredential credentials = oAuthCredentialRepository.findByUserIdAndDriveId(userId, 1).get();
 
         // Create GoogleCredentials dynamically with the updated token
         GoogleCredentials googleCredentials = GoogleCredentials.create(

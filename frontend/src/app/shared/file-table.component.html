@@ -1,0 +1,107 @@
+<div class="card ft">
+  <div class="toolbar">
+    <label class="input-wrap">
+      <span class="lead"><app-icon name="search" [size]="16" /></span>
+      <input class="input" type="search" placeholder="Search by name or type…" [ngModel]="query()" (ngModelChange)="query.set($event)" />
+    </label>
+    <ng-content select="[toolbar]" />
+    <span class="grow"></span>
+    @if (state === 'loaded') {
+      <span class="muted summary">
+        @if (query()) { {{ visible().length }} of }{{ total() }} {{ total() === 1 ? 'file' : 'files' }} · {{ formatBytes(totalSize()) }}
+      </span>
+    }
+  </div>
+
+  @if (state === 'error') {
+    <div class="empty error">
+      <div class="empty-icon"><app-icon name="alert" [size]="26" /></div>
+      <h3>Couldn't load files</h3>
+      <p>{{ errorText || 'Something went wrong while talking to the server.' }}</p>
+      <button class="btn btn-secondary" (click)="retry.emit()"><app-icon name="refresh" [size]="15" /> Try again</button>
+    </div>
+  } @else {
+    <div class="table-wrap">
+      <table class="table">
+        <thead>
+          <tr>
+            <th><button class="th-sort" (click)="sort('name')">Name
+              @if (sortKey() === 'name') { <app-icon [name]="sortDir() === 1 ? 'chevron-up' : 'chevron-down'" [size]="13" /> }</button></th>
+            @if (showDrive) { <th>Drive</th> }
+            <th class="hide-md">Type</th>
+            <th class="num"><button class="th-sort" (click)="sort('size')">Size
+              @if (sortKey() === 'size') { <app-icon [name]="sortDir() === 1 ? 'chevron-up' : 'chevron-down'" [size]="13" /> }</button></th>
+            <th class="hide-sm"><button class="th-sort" (click)="sort('createdAt')">Created
+              @if (sortKey() === 'createdAt') { <app-icon [name]="sortDir() === 1 ? 'chevron-up' : 'chevron-down'" [size]="13" /> }</button></th>
+            <th class="actions"><span class="sr-only">Actions</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (state === 'loading') {
+            @for (i of [1, 2, 3, 4, 5]; track i) {
+              <tr>
+                <td><div class="file-cell"><div class="skeleton" style="width:36px;height:36px;border-radius:10px"></div><div class="skeleton" style="height:12px;width:180px"></div></div></td>
+                @if (showDrive) { <td><div class="skeleton" style="height:12px;width:80px"></div></td> }
+                <td class="hide-md"><div class="skeleton" style="height:12px;width:70px"></div></td>
+                <td class="num"><div class="skeleton" style="height:12px;width:50px;margin-left:auto"></div></td>
+                <td class="hide-sm"><div class="skeleton" style="height:12px;width:80px"></div></td>
+                <td></td>
+              </tr>
+            }
+          } @else {
+            @for (r of visible(); track r.key) {
+              <tr [class.removing]="busy[r.key] === 'delete'">
+                <td>
+                  <div class="file-cell">
+                    <div class="file-icon {{ fileKind(r.type, r.name).cls }}">{{ fileKind(r.type, r.name).label }}</div>
+                    <span class="file-name" [title]="r.name">{{ r.name }}</span>
+                  </div>
+                </td>
+                @if (showDrive) {
+                  <td><span class="drive-tag"><img [src]="driveLogo(r.drive)" alt="" />{{ r.drive === 'onedrive' ? 'OneDrive' : 'Google Drive' }}</span></td>
+                }
+                <td class="hide-md muted">{{ typeLabel(r.type) }}</td>
+                <td class="num">{{ formatBytes(r.size) }}</td>
+                <td class="hide-sm muted">{{ r.createdAt ? (r.createdAt | date: 'MMM d, y') : '—' }}</td>
+                <td class="actions">
+                  @if (confirming() === r.key) {
+                    <span class="confirm">
+                      Delete?
+                      <button class="btn btn-danger btn-sm" (click)="confirmDelete(r)">Delete</button>
+                      <button class="btn btn-ghost btn-sm" (click)="confirming.set(null)">Cancel</button>
+                    </span>
+                  } @else {
+                    <button class="icon-btn" title="Download" (click)="download.emit(r)" [disabled]="!!busy[r.key] || r.type === 'folder'">
+                      @if (busy[r.key] === 'download') { <span class="spinner" style="width:14px;height:14px"></span> }
+                      @else { <app-icon name="download" [size]="17" /> }
+                    </button>
+                    <button class="icon-btn danger" title="Delete" (click)="askDelete(r)" [disabled]="!!busy[r.key]">
+                      @if (busy[r.key] === 'delete') { <span class="spinner" style="width:14px;height:14px"></span> }
+                      @else { <app-icon name="trash" [size]="17" /> }
+                    </button>
+                  }
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td [attr.colspan]="showDrive ? 6 : 5">
+                  <div class="empty">
+                    <div class="empty-icon"><app-icon [name]="query() ? 'search' : 'folder'" [size]="26" /></div>
+                    @if (query()) {
+                      <h3>No matches</h3>
+                      <p>Nothing matches "{{ query() }}".</p>
+                      <button class="btn btn-secondary btn-sm" (click)="query.set('')">Clear search</button>
+                    } @else {
+                      <h3>{{ emptyTitle }}</h3>
+                      <p>{{ emptyText }}</p>
+                    }
+                  </div>
+                </td>
+              </tr>
+            }
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

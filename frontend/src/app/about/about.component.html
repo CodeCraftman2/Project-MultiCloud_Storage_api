@@ -1,0 +1,62 @@
+<div class="page">
+  <section class="hero card">
+    <div class="hero-text">
+      <span class="badge">About MultiCloud</span>
+      <h2>Manage files across Google Drive and OneDrive from one place.</h2>
+      <p>
+        MultiCloud File Storage brings your cloud drives into one easy workspace. Upload to several
+        platforms at once, browse and download files, and keep an eye on storage, all secured with OAuth 2.0 and JWT.
+      </p>
+    </div>
+    <div class="hero-art" aria-hidden="true">
+      <div class="orb"><app-icon name="cloud" [size]="44" [stroke]="1.8" /></div>
+      <img src="googledrive.png" class="float g" alt="" />
+      <img src="onedrive.png" class="float o" alt="" />
+    </div>
+  </section>
+
+  <section class="features">
+    @for (f of features; track f.title) {
+      <div class="card feature">
+        <div class="f-ico"><app-icon [name]="f.icon" [size]="20" /></div>
+        <h4>{{ f.title }}</h4>
+        <p>{{ f.text }}</p>
+      </div>
+    }
+  </section>
+
+  <div class="two">
+    <section class="card pad">
+      <h3 class="section-title"><app-icon name="zap" [size]="17" /> Getting started</h3>
+      <ol class="steps">
+        @for (s of steps; track s.title; let i = $index) {
+          <li>
+            <span class="n">{{ i + 1 }}</span>
+            <div><strong>{{ s.title }}</strong><p>{{ s.text }}</p></div>
+          </li>
+        }
+      </ol>
+    </section>
+
+    <section class="card pad">
+      <h3 class="section-title"><app-icon name="info" [size]="17" /> Troubleshooting</h3>
+      @for (f of faq; track f.q) {
+        <details class="faq">
+          <summary>{{ f.q }} <app-icon name="chevron-down" [size]="16" /></summary>
+          <p>{{ f.a }}</p>
+        </details>
+      }
+      <div class="sys">
+        <span class="muted">Backend</span>
+        <span class="mono">{{ apiBase }}</span>
+        @switch (status.backend()) {
+          @case ('online') { <span class="badge ok"><span class="dot ok"></span>Online</span> }
+          @case ('offline') { <span class="badge err"><span class="dot err"></span>Offline</span> }
+          @default { <span class="badge muted">Checking…</span> }
+        }
+      </div>
+    </section>
+  </div>
+
+  <p class="credit">Built during the Infosys Springboard Multi-cloud Java batch, Oct 2024.</p>
+</div>
